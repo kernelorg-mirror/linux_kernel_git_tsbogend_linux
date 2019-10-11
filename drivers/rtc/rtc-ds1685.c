@@ -21,6 +21,7 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/rtc.h>
+#include <linux/sched/signal.h>
 #include <linux/workqueue.h>
 
 #include <linux/rtc/ds1685.h>
@@ -29,6 +30,7 @@
 #include <linux/proc_fs.h>
 #endif
 
+static void ds1685_rtc_kickstart(struct platform_device *pdev);
 
 /* ----------------------------------------------------------------------- */
 /*
@@ -602,7 +604,7 @@ ds1685_rtc_extended_irq(struct ds1685_priv *rtc, struct platform_device *pdev)
 		if (rtc->prepare_poweroff != NULL)
 			rtc->prepare_poweroff();
 		else
-			ds1685_rtc_poweroff(pdev);
+			ds1685_rtc_kickstart(pdev);
 	}
 
 	/*
@@ -1433,6 +1435,43 @@ ds1685_rtc_poweroff(struct platform_device *pdev)
 	}
 }
 EXPORT_SYMBOL(ds1685_rtc_poweroff);
+
+#define POWERDOWN_TIMEOUT	120
+
+struct ds1685_power {
+	struct timer_list timer;
+	struct platform_device *pdev;
+};
+
+static void ds1685_power_timeout(struct timer_list *t)
+{
+	struct ds1685_power *p = from_timer(p, t, timer);
+	struct platform_device *pdev;
+
+	pdev = p->pdev;
+	kfree(p);
+	ds1685_rtc_poweroff(pdev);
+}
+
+
+static void ds1685_rtc_kickstart(struct platform_device *pdev)
+{
+	static int shutting_down;
+	struct ds1685_power *p;
+
+	p = kzalloc(sizeof *p, GFP_KERNEL);
+
+	if (!p || shutting_down || kill_cad_pid(SIGINT, 1))
+		/* No init process or button pressed twice */
+		ds1685_rtc_poweroff(pdev);
+
+	shutting_down = 1;
+
+	p->pdev = pdev;
+	timer_setup(&p->timer, ds1685_power_timeout, 0);
+	mod_timer(&p->timer, jiffies + POWERDOWN_TIMEOUT * HZ);
+}
+
 /* ----------------------------------------------------------------------- */
 
 
