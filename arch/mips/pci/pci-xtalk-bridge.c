@@ -39,6 +39,16 @@ phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_addr)
 	return dma_addr & ~(0xffUL << 56);
 }
 
+#ifdef CONFIG_NUMA
+int pcibus_to_node(struct pci_bus *bus)
+{
+	struct bridge_controller *bc = BRIDGE_CONTROLLER(bus);
+
+	return bc->nasid;
+}
+EXPORT_SYMBOL(pcibus_to_node);
+#endif /* CONFIG_NUMA */
+
 /*
  * Most of the IOC3 PCI config register aren't present
  * we emulate what is needed for a normal PCI enumeration
