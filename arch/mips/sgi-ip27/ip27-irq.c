@@ -23,6 +23,14 @@
 #include <asm/sn/intr.h>
 #include <asm/sn/irq_alloc.h>
 
+static struct {
+	u64	mask0;
+	u64	mask1;
+} pi_int_offs[] = {
+	{ PI_INT_MASK0_A, PI_INT_MASK1_A },
+	{ PI_INT_MASK0_B, PI_INT_MASK1_B },
+};
+
 struct hub_irq_data {
 	u64	*irq_mask[2];
 	cpuid_t	cpu;
@@ -69,6 +77,7 @@ static void disable_hub_irq(struct irq_data *d)
 
 static void setup_hub_mask(struct hub_irq_data *hd, const struct cpumask *mask)
 {
+	unsigned int slice;
 	nasid_t nasid;
 	int cpu;
 
@@ -78,13 +87,11 @@ static void setup_hub_mask(struct hub_irq_data *hd, const struct cpumask *mask)
 
 	nasid = cpu_to_node(cpu);
 	hd->cpu = cpu;
-	if (!cputoslice(cpu)) {
-		hd->irq_mask[0] = REMOTE_HUB_PTR(nasid, PI_INT_MASK0_A);
-		hd->irq_mask[1] = REMOTE_HUB_PTR(nasid, PI_INT_MASK1_A);
-	} else {
-		hd->irq_mask[0] = REMOTE_HUB_PTR(nasid, PI_INT_MASK0_B);
-		hd->irq_mask[1] = REMOTE_HUB_PTR(nasid, PI_INT_MASK1_B);
-	}
+
+	slice = cputoslice(cpu);
+
+	hd->irq_mask[0] = REMOTE_HUB_PTR(nasid, pi_int_offs[slice].mask0);
+	hd->irq_mask[1] = REMOTE_HUB_PTR(nasid, pi_int_offs[slice].mask1);
 }
 
 static int set_affinity_hub_irq(struct irq_data *d, const struct cpumask *mask,
@@ -251,7 +258,7 @@ void install_ipi(void)
 {
 	int cpu = smp_processor_id();
 	unsigned long *mask = per_cpu(irq_enable_mask, cpu);
-	int slice = LOCAL_HUB_L(PI_CPU_NUM);
+	unsigned int slice = LOCAL_HUB_L(PI_CPU_NUM);
 	int resched, call;
 
 	resched = CPU_RESCHED_A_IRQ + slice;
@@ -262,26 +269,16 @@ void install_ipi(void)
 	set_bit(call, mask);
 	LOCAL_HUB_CLR_INTR(call);
 
-	if (slice == 0) {
-		LOCAL_HUB_S(PI_INT_MASK0_A, mask[0]);
-		LOCAL_HUB_S(PI_INT_MASK1_A, mask[1]);
-	} else {
-		LOCAL_HUB_S(PI_INT_MASK0_B, mask[0]);
-		LOCAL_HUB_S(PI_INT_MASK1_B, mask[1]);
-	}
+	LOCAL_HUB_S(pi_int_offs[slice].mask0, mask[0]);
+	LOCAL_HUB_S(pi_int_offs[slice].mask1, mask[1]);
 }
 
 void nmi_dump_hub_irq(nasid_t nasid, int slice)
 {
 	u64 mask0, mask1, pend0, pend1;
 
-	if (slice == 0) {				/* Slice A */
-		mask0 = REMOTE_HUB_L(nasid, PI_INT_MASK0_A);
-		mask1 = REMOTE_HUB_L(nasid, PI_INT_MASK1_A);
-	} else {					/* Slice B */
-		mask0 = REMOTE_HUB_L(nasid, PI_INT_MASK0_B);
-		mask1 = REMOTE_HUB_L(nasid, PI_INT_MASK1_B);
-	}
+	mask0 = REMOTE_HUB_L(nasid, pi_int_offs[slice].mask0);
+	mask1 = REMOTE_HUB_L(nasid, pi_int_offs[slice].mask1);
 
 	pend0 = REMOTE_HUB_L(nasid, PI_INT_PEND0);
 	pend1 = REMOTE_HUB_L(nasid, PI_INT_PEND1);
@@ -295,10 +292,10 @@ __init void intr_clear_all(nasid_t nasid)
 {
 	int i;
 
-	REMOTE_HUB_S(nasid, PI_INT_MASK0_A, 0);
-	REMOTE_HUB_S(nasid, PI_INT_MASK0_B, 0);
-	REMOTE_HUB_S(nasid, PI_INT_MASK1_A, 0);
-	REMOTE_HUB_S(nasid, PI_INT_MASK1_B, 0);
+	for (i = 0; i < ARRAY_SIZE(pi_int_offs); i++) {
+		REMOTE_HUB_S(nasid, pi_int_offs[i].mask0, 0);
+		REMOTE_HUB_S(nasid, pi_int_offs[i].mask1, 0);
+	}
 
 	for (i = 0; i < 128; i++)
 		REMOTE_HUB_CLR_INTR(nasid, i);
