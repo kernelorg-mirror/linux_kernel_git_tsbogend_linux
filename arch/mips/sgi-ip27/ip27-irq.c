@@ -271,6 +271,39 @@ void install_ipi(void)
 	}
 }
 
+void nmi_dump_hub_irq(nasid_t nasid, int slice)
+{
+	u64 mask0, mask1, pend0, pend1;
+
+	if (slice == 0) {				/* Slice A */
+		mask0 = REMOTE_HUB_L(nasid, PI_INT_MASK0_A);
+		mask1 = REMOTE_HUB_L(nasid, PI_INT_MASK1_A);
+	} else {					/* Slice B */
+		mask0 = REMOTE_HUB_L(nasid, PI_INT_MASK0_B);
+		mask1 = REMOTE_HUB_L(nasid, PI_INT_MASK1_B);
+	}
+
+	pend0 = REMOTE_HUB_L(nasid, PI_INT_PEND0);
+	pend1 = REMOTE_HUB_L(nasid, PI_INT_PEND1);
+
+	pr_emerg("PI_INT_MASK0: %16llx PI_INT_MASK1: %16llx\n", mask0, mask1);
+	pr_emerg("PI_INT_PEND0: %16llx PI_INT_PEND1: %16llx\n", pend0, pend1);
+	pr_emerg("\n\n");
+}
+
+__init void intr_clear_all(nasid_t nasid)
+{
+	int i;
+
+	REMOTE_HUB_S(nasid, PI_INT_MASK0_A, 0);
+	REMOTE_HUB_S(nasid, PI_INT_MASK0_B, 0);
+	REMOTE_HUB_S(nasid, PI_INT_MASK1_A, 0);
+	REMOTE_HUB_S(nasid, PI_INT_MASK1_B, 0);
+
+	for (i = 0; i < 128; i++)
+		REMOTE_HUB_CLR_INTR(nasid, i);
+}
+
 void __init arch_init_irq(void)
 {
 	struct irq_domain *domain;

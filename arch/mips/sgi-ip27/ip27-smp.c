@@ -81,19 +81,6 @@ void cpu_node_probe(void)
 	printk("Discovered %d cpus on %d nodes\n", highest + 1, num_online_nodes());
 }
 
-static __init void intr_clear_all(nasid_t nasid)
-{
-	int i;
-
-	REMOTE_HUB_S(nasid, PI_INT_MASK0_A, 0);
-	REMOTE_HUB_S(nasid, PI_INT_MASK0_B, 0);
-	REMOTE_HUB_S(nasid, PI_INT_MASK1_A, 0);
-	REMOTE_HUB_S(nasid, PI_INT_MASK1_B, 0);
-
-	for (i = 0; i < 128; i++)
-		REMOTE_HUB_CLR_INTR(nasid, i);
-}
-
 static void ip27_send_ipi_single(int destid, unsigned int action)
 {
 	int irq;

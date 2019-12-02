@@ -11,6 +11,8 @@
 #include <asm/sn/arch.h>
 #include <asm/sn/agent.h>
 
+#include "ip27-common.h"
+
 #if 0
 #define NODE_NUM_CPUS(n)	CNODE_NUM_CPUS(n)
 #else
@@ -127,26 +129,6 @@ void nmi_cpu_eframe_save(nasid_t nasid, int slice)
 	pr_emerg("NMI_SR: %016lx\n", nr->nmi_sr);
 
 	pr_emerg("\n");
-}
-
-void nmi_dump_hub_irq(nasid_t nasid, int slice)
-{
-	u64 mask0, mask1, pend0, pend1;
-
-	if (slice == 0) {				/* Slice A */
-		mask0 = REMOTE_HUB_L(nasid, PI_INT_MASK0_A);
-		mask1 = REMOTE_HUB_L(nasid, PI_INT_MASK1_A);
-	} else {					/* Slice B */
-		mask0 = REMOTE_HUB_L(nasid, PI_INT_MASK0_B);
-		mask1 = REMOTE_HUB_L(nasid, PI_INT_MASK1_B);
-	}
-
-	pend0 = REMOTE_HUB_L(nasid, PI_INT_PEND0);
-	pend1 = REMOTE_HUB_L(nasid, PI_INT_PEND1);
-
-	pr_emerg("PI_INT_MASK0: %16llx PI_INT_MASK1: %16llx\n", mask0, mask1);
-	pr_emerg("PI_INT_PEND0: %16llx PI_INT_PEND1: %16llx\n", pend0, pend1);
-	pr_emerg("\n\n");
 }
 
 /*
