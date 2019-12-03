@@ -29,6 +29,10 @@ static struct {
 } pi_int_offs[] = {
 	{ PI_INT_MASK0_A, PI_INT_MASK1_A },
 	{ PI_INT_MASK0_B, PI_INT_MASK1_B },
+#ifdef CONFIG_SGI_IP35
+	{ PI_1(PI_INT_MASK0_A), PI_1(PI_INT_MASK1_A) },
+	{ PI_1(PI_INT_MASK0_B), PI_1(PI_INT_MASK1_B) },
+#endif
 };
 
 struct hub_irq_data {
@@ -163,7 +167,7 @@ static int hub_domain_alloc(struct irq_domain *domain, unsigned int virq,
 	info->nasid = cpu_to_node(hd->cpu);
 
 	/* Make sure it's not already pending when we connect it. */
-	REMOTE_HUB_CLR_INTR(info->nasid, swlevel);
+	REMOTE_HUB_CLR_INTR(info->nasid, cputoslice(hd->cpu), swlevel);
 
 	desc = irq_to_desc(virq);
 	desc->irq_common_data.node = info->nasid;
@@ -269,7 +273,7 @@ void install_ipi(void)
 {
 	int cpu = smp_processor_id();
 	unsigned long *mask = per_cpu(irq_enable_mask, cpu);
-	unsigned int slice = LOCAL_HUB_L(PI_CPU_NUM);
+	unsigned int slice = LOCAL_HUB_L(PI_CPU_NUM) & 1;
 	int resched, call;
 
 	resched = CPU_RESCHED_A_IRQ + slice;
@@ -284,15 +288,17 @@ void install_ipi(void)
 	LOCAL_HUB_S(pi_int_offs[slice].mask1, mask[1]);
 }
 
-void nmi_dump_hub_irq(nasid_t nasid, int slice)
+void nmi_dump_hub_irq(nasid_t nasid, int cpu_on_node)
 {
+	unsigned int subnode = cpu_on_node & 2;
+	unsigned int slice = cpu_on_node & 1;
 	u64 mask0, mask1, pend0, pend1;
 
-	mask0 = REMOTE_HUB_L(nasid, pi_int_offs[slice].mask0);
-	mask1 = REMOTE_HUB_L(nasid, pi_int_offs[slice].mask1);
+	mask0 = REMOTE_HUB_L(nasid, PIREG(pi_int_offs[slice].mask0, subnode));
+	mask1 = REMOTE_HUB_L(nasid, PIREG(pi_int_offs[slice].mask1, subnode));
 
-	pend0 = REMOTE_HUB_L(nasid, PI_INT_PEND0);
-	pend1 = REMOTE_HUB_L(nasid, PI_INT_PEND1);
+	pend0 = REMOTE_HUB_L(nasid, PIREG(PI_INT_PEND0, subnode));
+	pend1 = REMOTE_HUB_L(nasid, PIREG(PI_INT_PEND1, subnode));
 
 	pr_emerg("PI_INT_MASK0: %16llx PI_INT_MASK1: %16llx\n", mask0, mask1);
 	pr_emerg("PI_INT_PEND0: %16llx PI_INT_PEND1: %16llx\n", pend0, pend1);
@@ -308,8 +314,12 @@ __init void intr_clear_all(nasid_t nasid)
 		REMOTE_HUB_S(nasid, pi_int_offs[i].mask1, 0);
 	}
 
-	for (i = 0; i < 128; i++)
-		REMOTE_HUB_CLR_INTR(nasid, i);
+	for (i = 0; i < 128; i++) {
+		REMOTE_HUB_CLR_INTR(nasid, 0, i);
+#ifdef CONFIG_SGI_IP35
+		REMOTE_HUB_CLR_INTR(nasid, 2, i);
+#endif
+	}
 }
 
 void __init arch_init_irq(void)

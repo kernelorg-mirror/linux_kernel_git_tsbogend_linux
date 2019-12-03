@@ -14,8 +14,15 @@
 
 #define LOCAL_HUB_SEND_INTR(level)				\
 	LOCAL_HUB_S(PI_INT_PEND_MOD, (0x100 | (level)))
-#define REMOTE_HUB_SEND_INTR(hub, level)			\
+
+#ifdef CONFIG_SGI_IP27
+#define REMOTE_HUB_SEND_INTR(hub, slice, level)			\
 	REMOTE_HUB_S((hub), PI_INT_PEND_MOD, (0x100 | (level)))
+#endif
+#ifdef CONFIG_SGI_IP35
+#define REMOTE_HUB_SEND_INTR(hub, s, level)			\
+	REMOTE_HUB_S((hub), PIREG(PI_INT_PEND_MOD, (s) & 2), (0x100 | (level)))
+#endif
 
 /*
  * When clearing the interrupt, make sure this clear does make it
@@ -29,13 +36,25 @@ do {								\
 	LOCAL_HUB_L(PI_INT_PEND0);				\
 } while (0);
 
-#define REMOTE_HUB_CLR_INTR(hub, level)				\
+#ifdef CONFIG_SGI_IP27
+#define REMOTE_HUB_CLR_INTR(hub, s, level)			\
 do {								\
 	nasid_t	 __hub = (hub);					\
 								\
 	REMOTE_HUB_S(__hub, PI_INT_PEND_MOD, (level));		\
 	REMOTE_HUB_L(__hub, PI_INT_PEND0);			\
 } while (0);
+#endif
+#ifdef CONFIG_SGI_IP35
+#define REMOTE_HUB_CLR_INTR(hub, s, level)			\
+do {								\
+	nasid_t	 __hub = (hub);					\
+	int __sn = (s) & 2;					\
+								\
+	REMOTE_HUB_S(__hub, PIREG(PI_INT_PEND_MOD, __sn), (level));\
+	REMOTE_HUB_L(__hub, PIREG(PI_INT_PEND0, __sn));		\
+} while (0);
+#endif
 
 /*
  * Hard-coded interrupt levels:
