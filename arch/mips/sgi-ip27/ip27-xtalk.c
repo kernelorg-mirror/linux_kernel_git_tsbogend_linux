@@ -158,7 +158,7 @@ static int xbow_probe(nasid_t nasid)
 	 * found xbow, so may have multiple bridges
 	 * need to probe xbow
 	 */
-	brd = find_lboard((lboard_t *)KL_CONFIG_INFO(nasid), KLTYPE_MIDPLANE8);
+	brd = find_lboard_class(KL_CONFIG_INFO(nasid), KLCLASS_MIDPLANE);
 	if (!brd)
 		return -ENODEV;
 
