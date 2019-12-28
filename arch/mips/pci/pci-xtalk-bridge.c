@@ -31,7 +31,7 @@ dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
 	struct pci_dev *pdev = to_pci_dev(dev);
 	struct bridge_controller *bc = BRIDGE_CONTROLLER(pdev->bus);
 
-	return bc->baddr + paddr;
+	return bc->baddr[PCI_SLOT(pdev->devfn)] + paddr;
 }
 
 phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_addr)
@@ -108,6 +108,7 @@ static void bridge_disable_swapping(struct pci_dev *dev)
 	int slot = PCI_SLOT(dev->devfn);
 
 	/* Turn off byte swapping */
+	bc->baddr[slot] &= ~PCI64_ATTR_SWAP;
 	bridge_clr(bc, b_device[slot].reg, BRIDGE_DEV_SWAP_DIR);
 	bridge_read(bc, b_widget.w_tflush);	/* Flush */
 }
@@ -622,6 +623,7 @@ static int bridge_probe(struct platform_device *pdev)
 	struct bridge_controller *bc;
 	struct pci_host_bridge *host;
 	struct irq_domain *domain, *parent;
+	dma_addr_t baddr;
 	struct fwnode_handle *fn;
 	char partnum[26];
 	int slot;
@@ -671,7 +673,6 @@ static int bridge_probe(struct platform_device *pdev)
 
 	bc->nasid = bd->nasid;
 
-	bc->baddr = (u64)bd->masterwid << 60 | PCI64_ATTR_BAR;
 	bc->base = (struct bridge_regs *)bd->bridge_addr;
 	bc->intr_addr = bd->intr_addr;
 
@@ -706,6 +707,12 @@ static int bridge_probe(struct platform_device *pdev)
 	bridge_write(bc, b_dir_map, (bd->masterwid << 20));	/* DMA */
 	bridge_write(bc, b_int_enable, 0);
 
+	baddr = (u64)bd->masterwid << 60 | PCI64_ATTR_BAR;
+	switch ((bridge_read(bc, b_wid_id) >> 12) & 0xffff) {
+	case XBRIDGE_WIDGET_PART_NUM:
+		baddr |= PCI64_ATTR_SWAP;
+		break;
+	}
 	for (slot = 0; slot < 8; slot++) {
 		bridge_set(bc, b_device[slot].reg, BRIDGE_DEV_SWAP_DIR);
 		bc->pci_int[slot][0] = -1;
@@ -713,6 +720,7 @@ static int bridge_probe(struct platform_device *pdev)
 		/* default interrupt pin mapping */
 		bc->int_mapping[slot][0] = slot;
 		bc->int_mapping[slot][1] = slot ^ 4;
+		bc->baddr[slot] = baddr;
 	}
 	bridge_read(bc, b_wid_tflush);	  /* wait until Bridge PIO complete */
 

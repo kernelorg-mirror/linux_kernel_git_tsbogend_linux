@@ -807,7 +807,7 @@ struct bridge_controller {
 		struct bridge_regs	*base;
 		struct pic		*pic;
 	};
-	unsigned long		baddr;
+	dma_addr_t		baddr[8];
 	unsigned long		intr_addr;
 	struct irq_domain	*domain;
 	unsigned int		pci_int[8][2];
