@@ -34,6 +34,14 @@ void machine_power_off(void) __noreturn;
 
 #define noreturn while(1);				/* Silence gcc.	 */
 
+static void ni_reset(void)
+{
+#ifdef CONFIG_SGI_IP35
+	LOCAL_HUB_S(NI_RESET_ENABLE, 1);
+#endif
+	LOCAL_HUB_S(NI_PORT_RESET, NPR_PORTRESET | NPR_LOCALRESET);
+}
+
 /* XXX How to pass the reboot command to the firmware??? */
 static void ip27_machine_restart(char *command)
 {
@@ -49,7 +57,7 @@ static void ip27_machine_restart(char *command)
 	for_each_online_node(i)
 		REMOTE_HUB_S(i, PROMOP_REG, PROMOP_REBOOT);
 #else
-	LOCAL_HUB_S(NI_PORT_RESET, NPR_PORTRESET | NPR_LOCALRESET);
+	ni_reset();
 #endif
 	noreturn;
 }
@@ -63,7 +71,8 @@ static void ip27_machine_halt(void)
 #endif
 	for_each_online_node(i)
 		REMOTE_HUB_S(i, PROMOP_REG, PROMOP_RESTART);
-	LOCAL_HUB_S(NI_PORT_RESET, NPR_PORTRESET | NPR_LOCALRESET);
+
+	ni_reset();
 	noreturn;
 }
 
