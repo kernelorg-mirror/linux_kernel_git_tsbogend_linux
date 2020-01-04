@@ -475,6 +475,31 @@ static int ip30_sysboard_setup(struct ioc3_priv_data *ipd)
 	return ioc3_led_setup(ipd);
 }
 
+static int ip34_sysboard_setup(struct ioc3_priv_data *ipd)
+{
+	int ret, io_irq;
+
+	io_irq = ioc3_map_irq(ipd->pdev, PCI_SLOT(ipd->pdev->devfn),
+			      PCI_INTERRUPT_INTB);
+	ret = ioc3_irq_domain_setup(ipd, io_irq);
+	if (ret)
+		return ret;
+
+	ret = ioc3_eth_setup(ipd);
+	if (ret)
+		return ret;
+
+	ret = ioc3_serial_setup(ipd);
+	if (ret)
+		return ret;
+
+	ret = ioc3_m48t35_setup(ipd);
+	if (ret)
+		return ret;
+
+	return ioc3_kbd_setup(ipd);
+}
+
 static int ioc3_menet_setup(struct ioc3_priv_data *ipd)
 {
 	int ret, io_irq;
@@ -532,6 +557,7 @@ static struct {
 	IOC3_SID("IP27 BaseIO", IP27_BASEIO, &ip27_baseio_setup),
 	IOC3_SID("IP29 System Board", IP29_SYSBOARD, &ip27_baseio6g_setup),
 	IOC3_SID("IP30 System Board", IP30_SYSBOARD, &ip30_sysboard_setup),
+	IOC3_SID("IP34 Fuel", IP34_SYSBOARD, &ip34_sysboard_setup),
 	IOC3_SID("MENET", MENET, &ioc3_menet_setup),
 	IOC3_SID("MENET4", MENET4, &ioc3_menet4_setup)
 };
