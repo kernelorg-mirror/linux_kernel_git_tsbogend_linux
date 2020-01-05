@@ -20,7 +20,7 @@
 
 struct m48t35_rtc {
 	u8	pad[0x7ff8];    /* starts at 0x7ff8 */
-#ifdef CONFIG_SGI_IP27
+#if defined(CONFIG_SGI_IP27) || defined(CONFIG_SGI_IP35)
 	u8	hour;
 	u8	min;
 	u8	sec;
@@ -40,6 +40,12 @@ struct m48t35_rtc {
 	u8	year;
 #endif
 };
+
+#ifdef CONFIG_SGI_IP35
+#define RTC_BASE_YEAR	1968
+#else
+#define RTC_BASE_YEAR	1970
+#endif
 
 #define M48T35_RTC_SET		0x80
 #define M48T35_RTC_READ		0x40
@@ -86,10 +92,7 @@ static int m48t35_read_time(struct device *dev, struct rtc_time *tm)
 	 * Account for differences between how the RTC uses the values
 	 * and how they are defined in a struct rtc_time;
 	 */
-	tm->tm_year += 70;
-	if (tm->tm_year <= 69)
-		tm->tm_year += 100;
-
+	tm->tm_year += RTC_BASE_YEAR;
 	tm->tm_mon--;
 	return 0;
 }
@@ -108,18 +111,12 @@ static int m48t35_set_time(struct device *dev, struct rtc_time *tm)
 	min = tm->tm_min;
 	sec = tm->tm_sec;
 
-	if (yrs < 1970)
+	if (yrs < RTC_BASE_YEAR)
 		return -EINVAL;
 
-	yrs -= 1970;
-	if (yrs > 255)    /* They are unsigned */
+	yrs -= RTC_BASE_YEAR;
+	if (yrs > 100)
 		return -EINVAL;
-
-	if (yrs > 169)
-		return -EINVAL;
-
-	if (yrs >= 100)
-		yrs -= 100;
 
 	sec = bin2bcd(sec);
 	min = bin2bcd(min);
