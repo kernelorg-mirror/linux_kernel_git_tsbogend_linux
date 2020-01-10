@@ -28,38 +28,19 @@
  */
 
 #include <linux/types.h>
-#include <asm/sn/types.h>
-
-#if defined(CONFIG_SGI_IP27)
-
-#include <asm/sn/sn0/addrs.h>
-//#include <sys/SN/router.h>
-// XXX Stolen from <sys/SN/router.h>:
-#define MAX_ROUTER_PORTS (6)	/* Max. number of ports on a router */
-#include <asm/sn/fru.h>
-//#include <sys/graph.h>
-//#include <sys/xtalk/xbow.h>
-
-#elif defined(CONFIG_SGI_IP35)
-
-#include <asm/sn/sn1/addrs.h>
-#include <sys/sn/router.h>
-#include <sys/graph.h>
-#include <asm/xtalk/xbow.h>
-
-#endif /* !CONFIG_SGI_IP27 && !CONFIG_SGI_IP35 */
-
-#if defined(CONFIG_SGI_IP27) || defined(CONFIG_SGI_IP35)
-#include <asm/sn/agent.h>
 #include <asm/fw/arc/types.h>
 #include <asm/fw/arc/hinv.h>
-#if defined(CONFIG_SGI_IP35)
-// The hack file has to be before vector and after sn0_fru....
-#include <asm/hack.h>
-#include <asm/sn/vector.h>
+#include <asm/sn/types.h>
+#include <asm/sn/addrs.h>
+#include <asm/sn/agent.h>
+#include <asm/sn/fru.h>
 #include <asm/xtalk/xtalk.h>
-#endif /* CONFIG_SGI_IP35 */
-#endif /* CONFIG_SGI_IP27 || CONFIG_SGI_IP35 */
+
+#if defined(CONFIG_SGI_IP27)
+#define MAX_ROUTER_PORTS	(6)	/* Max. number of ports on a router */
+#elif defined(CONFIG_SGI_IP35)
+#define MAX_ROUTER_PORTS	(8)	/* Max. number of ports on a router */
+#endif
 
 typedef u64  nic_t;
 
@@ -72,11 +53,6 @@ typedef s32 klconf_off_t;
  */
 #define MAX_MODULE_ID		255
 #define SIZE_PAD		4096 /* 4k padding for structures */
-/*
- * 1 NODE brd, 2 Router brd (1 8p, 1 meta), 6 Widgets,
- * 2 Midplanes assuming no pci card cages
- */
-#define MAX_SLOTS_PER_NODE	(1 + 2 + 6 + 2)
 
 /* XXX if each node is guaranteed to have some memory */
 

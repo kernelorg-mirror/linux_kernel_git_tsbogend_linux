@@ -17,7 +17,7 @@
 #if defined(CONFIG_SGI_IP27)
 #include <asm/sn/sn0/hub.h>
 #elif defined(CONFIG_SGI_IP35)
-#include <asm/sn/sn1/hub.h>
+#include <asm/sn/sn1/bedrock.h>
 #endif	/* !CONFIG_SGI_IP27 && !CONFIG_SGI_IP35 */
 
 /*

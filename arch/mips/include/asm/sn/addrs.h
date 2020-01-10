@@ -159,7 +159,13 @@
 #define RBOOT_SIZE		0x10000000	/* 256 Megabytes */
 #define NODE_RBOOT_BASE(_n)	(NODE_HSPEC_BASE(_n) + 0x30000000)
 #define NODE_RBOOT_LIMIT(_n)	(NODE_RBOOT_BASE(_n) + RBOOT_SIZE)
+#endif
 
+#ifdef CONFIG_SGI_IP35
+#define NODE_LREG_BASE(_n)	(NODE_HSPEC_BASE(_n) + 0x30000000)
+#define RBOOT_SIZE		0x8000000       /* 128 Megabytes */
+#define NODE_RBOOT_BASE(_n)	(NODE_HSPEC_BASE(_n) + 0x38000000)
+#define NODE_RBOOT_LIMIT(_n)	(NODE_RBOOT_BASE(_n) + RBOOT_SIZE)
 #endif
 
 /*
@@ -253,6 +259,10 @@
  */
 #define LOCAL_HUB_ADDR(_x)	(IALIAS_BASE + (_x))
 #define REMOTE_HUB_ADDR(_n, _x) ((NODE_SWIN_BASE(_n, 1) + 0x800000 + (_x)))
+
+#ifdef CONFIG_SGI_IP35
+#define REMOTE_HSPEC_ADDR(_n, _x)	(NODE_LREG_BASE(_n) + (_x))
+#endif
 
 #ifndef __ASSEMBLY__
 

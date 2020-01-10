@@ -16,6 +16,9 @@
 #ifdef CONFIG_SGI_IP27
 #include <asm/sn/sn0/arch.h>
 #endif
+#ifdef CONFIG_SGI_IP35
+#include <asm/sn/sn1/arch.h>
+#endif
 
 #define cputonasid(cpu)		(sn_cpu_info[(cpu)].p_nasid)
 #define cputoslice(cpu)		(sn_cpu_info[(cpu)].p_slice)
