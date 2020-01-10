@@ -797,12 +797,16 @@ struct bridge_err_cmdword {
 #define PCI64_ATTR_PREC		0x0400000000000000
 #define PCI64_ATTR_VIRTUAL	0x0200000000000000
 #define PCI64_ATTR_BAR		0x0100000000000000
+#define PCI64_ATTR_SWAP		0x0080000000000000 // XBridge/PIC only?
 #define PCI64_ATTR_RMF_MASK	0x00ff000000000000
 #define PCI64_ATTR_RMF_SHFT	48
 
 struct bridge_controller {
 	struct resource		busn;
-	struct bridge_regs	*base;
+	union {
+		struct bridge_regs	*base;
+		struct pic		*pic;
+	};
 	unsigned long		baddr;
 	unsigned long		intr_addr;
 	struct irq_domain	*domain;
@@ -810,6 +814,7 @@ struct bridge_controller {
 	unsigned int		int_mapping[8][2];
 	u32			ioc3_sid[8];
 	nasid_t			nasid;
+	int			is_pic;
 };
 
 #define BRIDGE_CONTROLLER(bus) \
