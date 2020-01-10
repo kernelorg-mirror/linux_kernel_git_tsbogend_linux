@@ -7,34 +7,16 @@
  * Copyright (C) 2000 - 2001 by Silicon Graphics, Inc.
  */
 #include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/sched.h>
-#include <linux/smp.h>
-#include <linux/mm.h>
 #include <linux/export.h>
-#include <linux/cpumask.h>
+#include <linux/init.h>
+#include <linux/interrupt.h>
 #include <asm/bootinfo.h>
-#include <asm/cpu.h>
-#include <asm/io.h>
+#include <asm/cacheflush.h>
 #include <asm/sgialib.h>
-#include <asm/time.h>
+#include <asm/sn/arch.h>
 #include <asm/sn/agent.h>
-#include <asm/sn/types.h>
-#include <asm/sn/klconfig.h>
-#include <asm/sn/ioc3.h>
-#include <asm/mipsregs.h>
-#include <asm/sn/gda.h>
-#include <asm/sn/intr.h>
-#include <asm/current.h>
-#include <asm/processor.h>
-#include <asm/mmu_context.h>
-#include <asm/thread_info.h>
-#include <asm/sn/launch.h>
-#include <asm/sn/mapped_kernel.h>
 
 #include "ip27-common.h"
-
-#define CPU_NONE		(cpuid_t)-1
 
 static DECLARE_BITMAP(hub_init_mask, MAX_NUMNODES);
 nasid_t master_nasid = INVALID_NASID;
@@ -107,32 +89,37 @@ void __init plat_mem_setup(void)
 	 * hub_rtc init and cpu clock intr enabled for later calibrate_delay.
 	 */
 	nid = get_nasid();
-	printk("IP27: Running on node %d.\n", nid);
+#ifdef CONFIG_SGI_IP35
+	pr_info("IP35: Running on node %d.\n", nid);
+	n_mode = 0; /* no N mode for IP35 */
+#else
+	pr_info("IP27: Running on node %d.\n", nid);
+	n_mode = LOCAL_HUB_L(NI_STATUS_REV_ID) & NSRI_MORENODES_MASK;
+#endif
 
 	p = LOCAL_HUB_L(PI_CPU_PRESENT_A) & 1;
 	e = LOCAL_HUB_L(PI_CPU_ENABLE_A) & 1;
-	printk("Node %d has %s primary CPU%s.\n", nid,
-	       p ? "a" : "no",
-	       e ? ", CPU is running" : "");
+	pr_info("Node %d has %s primary CPU%s.\n", nid,
+		p ? "a" : "no",
+		e ? ", CPU is running" : "");
 
 	p = LOCAL_HUB_L(PI_CPU_PRESENT_B) & 1;
 	e = LOCAL_HUB_L(PI_CPU_ENABLE_B) & 1;
-	printk("Node %d has %s secondary CPU%s.\n", nid,
-	       p ? "a" : "no",
-	       e ? ", CPU is running" : "");
+	pr_info("Node %d has %s secondary CPU%s.\n", nid,
+		p ? "a" : "no",
+		e ? ", CPU is running" : "");
 
 	/*
 	 * Try to catch kernel missconfigurations and give user an
 	 * indication what option to select.
 	 */
-	n_mode = LOCAL_HUB_L(NI_STATUS_REV_ID) & NSRI_MORENODES_MASK;
-	printk("Machine is in %c mode.\n", n_mode ? 'N' : 'M');
+	pr_info("Machine is in %c mode.\n", n_mode ? 'N' : 'M');
 #ifdef CONFIG_SGI_SN_N_MODE
 	if (!n_mode)
-		panic("Kernel compiled for M mode.");
+		panic("Kernel compiled for N mode.");
 #else
 	if (n_mode)
-		panic("Kernel compiled for N mode.");
+		panic("Kernel compiled for M mode.");
 #endif
 
 	ioport_resource.start = 0;
@@ -142,7 +129,11 @@ void __init plat_mem_setup(void)
 
 const char *get_system_type(void)
 {
+#ifdef CONFIG_SGI_IP35
+	return "SGI IP35";
+#else
 	return "SGI Origin";
+#endif
 }
 
 void __init prom_init(void)

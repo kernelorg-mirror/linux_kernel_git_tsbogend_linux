@@ -249,8 +249,9 @@ static unsigned long __init slot_psize_compute(nasid_t nasid, int slot)
 	if (!banks)
 		return 0;
 
+#ifdef CONFIG_SGI_IP27
 	/* Size in _Megabytes_ */
-	size = (unsigned long)banks->membnk_bnksz[slot/4];
+	size = banks->membnk_bnksz[slot/4];
 
 	/* hack for 128 dimm banks */
 	if (size <= 128) {
@@ -264,6 +265,11 @@ static unsigned long __init slot_psize_compute(nasid_t nasid, int slot)
 		size <<= 20;
 		return size >> PAGE_SHIFT;
 	}
+#else
+	size = banks->membnk_bnksz[slot];
+	size <<= 20;
+	return size >> PAGE_SHIFT;
+#endif
 }
 
 static void __init mlreset(void)

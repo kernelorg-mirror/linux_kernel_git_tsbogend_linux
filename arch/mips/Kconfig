@@ -793,6 +793,34 @@ config SGI_IP32
 	help
 	  If you want this kernel to run on SGI O2 workstation, say Y here.
 
+config SGI_IP35
+	bool "SGI IP35 (Origin3x0/Origin3x00/Fuel/Tezro)"
+	select ARC_CMDLINE_ONLY
+	select ARCH_HAS_PHYS_TO_DMA
+	select ARCH_SPARSEMEM_ENABLE
+	select BOOT_ELF64
+	select CRC_CCITT
+	select FW_ARC
+	select FW_ARC64
+	select DEFAULT_SGI_PARTITION
+	select HAVE_ARCH_NODEDATA_EXTENSION
+	select HAVE_PCI
+	select IRQ_MIPS_CPU
+	select IRQ_DOMAIN_HIERARCHY
+	select NR_CPUS_DEFAULT_64
+	select PCI_DRIVERS_GENERIC
+	select PCI_XTALK_BRIDGE
+	select SYS_HAS_CPU_R10000
+	select SYS_HAS_EARLY_PRINTK
+	select SYS_SUPPORTS_64BIT_KERNEL
+	select SYS_SUPPORTS_BIG_ENDIAN
+	select SYS_SUPPORTS_NUMA
+	select SYS_SUPPORTS_SMP
+	select MIPS_L1_CACHE_SHIFT_7
+	help
+	  This is for SGI Origin 3x0/3x00 and related systems.  To compile
+	  a Linux kernel that runs on these, say Y here.
+
 config SIBYTE_CRHONE
 	bool "Sibyte BCM91125C-CRhone"
 	select BOOT_ELF32
