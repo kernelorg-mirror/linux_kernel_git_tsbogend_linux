@@ -5,7 +5,8 @@
 struct irq_alloc_info {
 	void *ctrl;
 	nasid_t nasid;
-	int pin;
+	int pin;	/* interrupt pin of bridge */
+	int bit;	/* interrupt bit of hub/heart/bedrock */
 };
 
 #endif /* __ASM_SN_IRQ_ALLOC_H */

@@ -464,6 +464,7 @@ static int bridge_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
 		info.ctrl = bc;
 		info.nasid = bc->nasid;
 		info.pin = bc->int_mapping[slot][pin];
+		info.bit = -1;
 
 		irq = irq_domain_alloc_irqs(bc->domain, 1, bc->nasid, &info);
 		if (irq < 0)

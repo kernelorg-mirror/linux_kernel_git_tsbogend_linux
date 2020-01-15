@@ -138,7 +138,18 @@ static int hub_domain_alloc(struct irq_domain *domain, unsigned int virq,
 	if (!hd)
 		return -ENOMEM;
 
-	swlevel = alloc_level();
+	if (info->bit == -1) {
+		swlevel = alloc_level();
+	} else {
+		if (info->bit >= 0 &&
+		    info->bit < IP27_HUB_IRQ_COUNT &&
+		    test_bit(info->bit, hub_irq_map)) {
+			swlevel = info->bit;
+		} else {
+			kfree(hd);
+			return -EINVAL;
+		}
+	}
 	if (unlikely(swlevel < 0)) {
 		kfree(hd);
 		return -EAGAIN;

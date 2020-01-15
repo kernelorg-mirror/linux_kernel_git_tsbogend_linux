@@ -14,6 +14,8 @@
 
 #include <asm/irq_cpu.h>
 #include <asm/sgi/heart.h>
+#include <asm/sn/types.h>
+#include <asm/sn/irq_alloc.h>
 
 #include "ip30-common.h"
 
@@ -213,7 +215,18 @@ static int heart_domain_alloc(struct irq_domain *domain, unsigned int virq,
 	if (!hd)
 		return -ENOMEM;
 
-	hwirq = heart_alloc_int();
+	if (info->bit == -1) {
+		hwirq = heart_alloc_int();
+	} else {
+		if (info->bit >= 0 &&
+		    info->bit < HEART_NUM_IRQS &&
+		    test_bit(info->bit, heart_irq_map)) {
+			hwirq = info->bit;
+		} else {
+			kfree(hd);
+			return -EINVAL;
+		}
+	}
 	if (hwirq < 0) {
 		kfree(hd);
 		return -EAGAIN;
