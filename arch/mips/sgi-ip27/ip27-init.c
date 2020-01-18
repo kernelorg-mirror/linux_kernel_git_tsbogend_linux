@@ -38,13 +38,23 @@ static void per_hub_init(nasid_t nasid)
 	REMOTE_HUB_S(nasid, IIO_ICTP, 0x800);
 	REMOTE_HUB_S(nasid, IIO_ICTO, 0xff);
 
-	LOCAL_HUB_S(PI_RT_EN_A, 1);
-	LOCAL_HUB_S(PI_RT_EN_B, 1);
-	LOCAL_HUB_S(PI_PROF_EN_A, 0);
-	LOCAL_HUB_S(PI_PROF_EN_B, 0);
-	LOCAL_HUB_S(PI_RT_COUNT, 0);
-	LOCAL_HUB_S(PI_RT_PEND_A, 0);
-	LOCAL_HUB_S(PI_RT_PEND_B, 0);
+	REMOTE_HUB_S(nasid, PI_RT_EN_A, 1);
+	REMOTE_HUB_S(nasid, PI_RT_EN_B, 1);
+	REMOTE_HUB_S(nasid, PI_PROF_EN_A, 0);
+	REMOTE_HUB_S(nasid, PI_PROF_EN_B, 0);
+	REMOTE_HUB_S(nasid, PI_RT_COUNT, 0);
+	REMOTE_HUB_S(nasid, PI_RT_PEND_A, 0);
+	REMOTE_HUB_S(nasid, PI_RT_PEND_B, 0);
+
+#ifdef CONFIG_SGI_IP35
+	REMOTE_HUB_S(nasid, PI_RT_EN_A, 1);
+	REMOTE_HUB_S(nasid, PI_RT_EN_B, 1);
+	REMOTE_HUB_S(nasid, PI_PROF_EN_A, 0);
+	REMOTE_HUB_S(nasid, PI_PROF_EN_B, 0);
+	REMOTE_HUB_S(nasid, PI_RT_COUNT, 0);
+	REMOTE_HUB_S(nasid, PI_RT_PEND_A, 0);
+	REMOTE_HUB_S(nasid, PI_RT_PEND_B, 0);
+#endif
 
 	if (nasid) {
 		/* copy exception handlers from first node to current node */
