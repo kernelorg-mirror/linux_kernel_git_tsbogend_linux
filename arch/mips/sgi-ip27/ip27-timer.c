@@ -139,22 +139,3 @@ void __init plat_time_init(void)
 	hub_rt_clock_event_global_init();
 	hub_rt_clock_event_init();
 }
-
-void hub_rtc_init(nasid_t nasid)
-{
-
-	/*
-	 * We only need to initialize the current node.
-	 * If this is not the current node then it is a cpuless
-	 * node and timeouts will not happen there.
-	 */
-	if (get_nasid() == nasid) {
-		LOCAL_HUB_S(PI_RT_EN_A, 1);
-		LOCAL_HUB_S(PI_RT_EN_B, 1);
-		LOCAL_HUB_S(PI_PROF_EN_A, 0);
-		LOCAL_HUB_S(PI_PROF_EN_B, 0);
-		LOCAL_HUB_S(PI_RT_COUNT, 0);
-		LOCAL_HUB_S(PI_RT_PEND_A, 0);
-		LOCAL_HUB_S(PI_RT_PEND_B, 0);
-	}
-}

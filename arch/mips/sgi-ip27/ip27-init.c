@@ -56,7 +56,13 @@ static void per_hub_init(nasid_t nasid)
 	REMOTE_HUB_S(nasid, IIO_ICTP, 0x800);
 	REMOTE_HUB_S(nasid, IIO_ICTO, 0xff);
 
-	hub_rtc_init(nasid);
+	LOCAL_HUB_S(PI_RT_EN_A, 1);
+	LOCAL_HUB_S(PI_RT_EN_B, 1);
+	LOCAL_HUB_S(PI_PROF_EN_A, 0);
+	LOCAL_HUB_S(PI_PROF_EN_B, 0);
+	LOCAL_HUB_S(PI_RT_COUNT, 0);
+	LOCAL_HUB_S(PI_RT_PEND_A, 0);
+	LOCAL_HUB_S(PI_RT_PEND_B, 0);
 
 	if (nasid) {
 		/* copy exception handlers from first node to current node */
