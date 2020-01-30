@@ -137,13 +137,11 @@ void __init plat_mem_setup(void)
 	set_io_port_base(IO_BASE);
 }
 
+const char *ip27_system_type = "SGI Origin";
+
 const char *get_system_type(void)
 {
-#ifdef CONFIG_SGI_IP35
-	return "SGI IP35";
-#else
-	return "SGI Origin";
-#endif
+	return ip27_system_type;
 }
 
 void __init prom_init(void)
