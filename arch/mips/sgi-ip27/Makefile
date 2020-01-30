@@ -9,4 +9,5 @@ obj-y	:= ip27-berr.o ip27-irq.o ip27-init.o ip27-klconfig.o \
 
 obj-$(CONFIG_EARLY_PRINTK)	+= ip27-console.o
 obj-$(CONFIG_SMP)		+= ip27-smp.o
+obj-$(CONFIG_SGI_IP27)		+= ip27-pci.o
 obj-$(CONFIG_SGI_IP35)		+= ip35-l1.o
