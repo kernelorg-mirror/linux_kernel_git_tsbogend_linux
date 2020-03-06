@@ -13,6 +13,8 @@
 
 #include <linux/types.h>
 
+#define PIREG(x, sn)          (x)
+
 /*
  * Hub I/O interface registers
  *

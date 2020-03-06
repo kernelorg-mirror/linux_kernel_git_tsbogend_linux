@@ -290,15 +290,16 @@ void install_ipi(void)
 
 void nmi_dump_hub_irq(nasid_t nasid, int cpu_on_node)
 {
-	unsigned int subnode = cpu_on_node & 2;
 	unsigned int slice = cpu_on_node & 1;
 	u64 mask0, mask1, pend0, pend1;
 
-	mask0 = REMOTE_HUB_L(nasid, PIREG(pi_int_offs[slice].mask0, subnode));
-	mask1 = REMOTE_HUB_L(nasid, PIREG(pi_int_offs[slice].mask1, subnode));
+	mask0 = REMOTE_HUB_L(nasid, PIREG(pi_int_offs[slice].mask0,
+			     cpu_on_node & 2));
+	mask1 = REMOTE_HUB_L(nasid, PIREG(pi_int_offs[slice].mask1,
+			     cpu_on_node & 2));
 
-	pend0 = REMOTE_HUB_L(nasid, PIREG(PI_INT_PEND0, subnode));
-	pend1 = REMOTE_HUB_L(nasid, PIREG(PI_INT_PEND1, subnode));
+	pend0 = REMOTE_HUB_L(nasid, PIREG(PI_INT_PEND0, cpu_on_node & 2));
+	pend1 = REMOTE_HUB_L(nasid, PIREG(PI_INT_PEND1, cpu_on_node & 2));
 
 	pr_emerg("PI_INT_MASK0: %16llx PI_INT_MASK1: %16llx\n", mask0, mask1);
 	pr_emerg("PI_INT_PEND0: %16llx PI_INT_PEND1: %16llx\n", pend0, pend1);
