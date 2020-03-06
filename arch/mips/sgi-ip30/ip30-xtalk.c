@@ -150,6 +150,7 @@ static void __init xtalk_init_widget(s8 wid, s8 masterwid)
 {
 	xwidget_part_num_t partnum;
 	widgetreg_t widget_id;
+	struct resource res;
 
 	if (!xbow_widget_active(wid))
 		return;
@@ -162,6 +163,15 @@ static void __init xtalk_init_widget(s8 wid, s8 masterwid)
 	case BRIDGE_WIDGET_PART_NUM:
 	case XBRIDGE_WIDGET_PART_NUM:
 		bridge_platform_create(wid, masterwid);
+		break;
+	case 0xc003: // XXX
+		memset(&res, 0, sizeof(res));
+		res.start = IP30_SWIN_BASE(wid);
+		res.end = res.start + 0x100000; // XXX
+		res.flags = IORESOURCE_MEM;
+		platform_device_register_simple("impact", PLATFORM_DEVID_AUTO,
+						&res, 1);
+		pr_info("xtalk:%x impact widget\n", wid);
 		break;
 	default:
 		pr_info("xtalk:%x unknown widget (0x%x)\n", wid, partnum);

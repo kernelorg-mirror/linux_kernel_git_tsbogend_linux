@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: GPL-2.0-only
+config DRM_IMPACT
+	tristate "IMPACT Graphics Card"
+	depends on DRM && MIPS
+	select DRM_GEM_SHMEM_HELPER
+	select DRM_KMS_HELPER
+	help
+	  Chose this option if you have an SGI Impact Graphics Card
+
+	  If M is selected this module will be called impact.
