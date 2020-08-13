@@ -5,7 +5,7 @@
 #include <linux/platform_device.h>
 #include <asm/bootinfo.h>
 
-#include <ath25_platform.h>
+#include <asm/ath25_platform.h>
 #include "devices.h"
 #include "ar5312.h"
 #include "ar2315.h"

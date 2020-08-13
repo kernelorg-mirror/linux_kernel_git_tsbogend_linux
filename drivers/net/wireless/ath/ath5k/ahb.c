@@ -20,7 +20,7 @@
 #include <linux/nl80211.h>
 #include <linux/platform_device.h>
 #include <linux/etherdevice.h>
-#include <ath25_platform.h>
+#include <asm/ath25_platform.h>
 #include "ath5k.h"
 #include "debug.h"
 #include "base.h"

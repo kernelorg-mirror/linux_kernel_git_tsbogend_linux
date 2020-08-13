@@ -16,7 +16,7 @@
 #include <asm/bootinfo.h>
 #include <asm/time.h>
 
-#include <ath25_platform.h>
+#include <asm/ath25_platform.h>
 #include "devices.h"
 #include "ar5312.h"
 #include "ar2315.h"
