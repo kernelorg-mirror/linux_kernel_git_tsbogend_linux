@@ -24,8 +24,8 @@
 #include <linux/clk.h>
 
 #include <asm/addrspace.h>
-#include <asm/mach-ar7/ar7.h>
-#include <asm/mach-ar7/prom.h>
+#include <asm/ar7/ar7.h>
+#include <asm/ar7/prom.h>
 
 /*****************************************************************************
  * VLYNQ Bus

@@ -15,7 +15,7 @@
 #include <asm/page.h>
 #include <asm/sections.h>
 
-#include <asm/mach-ar7/ar7.h>
+#include <asm/ar7/ar7.h>
 
 static int __init memsize(void)
 {
