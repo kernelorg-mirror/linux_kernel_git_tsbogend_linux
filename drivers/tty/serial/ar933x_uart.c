@@ -28,7 +28,7 @@
 
 #include <asm/div64.h>
 
-#include <asm/mach-ath79/ar933x_uart.h>
+#include <asm/ath79/ar933x_uart.h>
 
 #include "serial_mctrl_gpio.h"
 

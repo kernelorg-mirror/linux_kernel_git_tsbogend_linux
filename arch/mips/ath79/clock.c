@@ -21,8 +21,8 @@
 
 #include <asm/div64.h>
 
-#include <asm/mach-ath79/ath79.h>
-#include <asm/mach-ath79/ar71xx_regs.h>
+#include <asm/ath79/ath79.h>
+#include <asm/ath79/ar71xx_regs.h>
 #include "common.h"
 
 #define AR71XX_BASE_FREQ	40000000

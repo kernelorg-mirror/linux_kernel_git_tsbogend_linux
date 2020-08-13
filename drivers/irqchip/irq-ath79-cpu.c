@@ -15,7 +15,7 @@
 #include <linux/of.h>
 
 #include <asm/irq_cpu.h>
-#include <asm/mach-ath79/ath79.h>
+#include <asm/ath79/ath79.h>
 
 /*
  * The IP2/IP3 lines are tied to a PCI/WMAC/USB device. Drivers for

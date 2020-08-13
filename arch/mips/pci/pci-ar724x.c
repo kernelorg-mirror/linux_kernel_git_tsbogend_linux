@@ -11,8 +11,8 @@
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/platform_device.h>
-#include <asm/mach-ath79/ath79.h>
-#include <asm/mach-ath79/ar71xx_regs.h>
+#include <asm/ath79/ath79.h>
+#include <asm/ath79/ar71xx_regs.h>
 
 #define AR724X_PCI_REG_APP		0x00
 #define AR724X_PCI_REG_RESET		0x18

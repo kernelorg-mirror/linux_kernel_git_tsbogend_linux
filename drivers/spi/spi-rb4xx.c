@@ -16,7 +16,7 @@
 #include <linux/spi/spi.h>
 #include <linux/of.h>
 
-#include <asm/mach-ath79/ar71xx_regs.h>
+#include <asm/ath79/ar71xx_regs.h>
 
 struct rb4xx_spi {
 	void __iomem *base;
