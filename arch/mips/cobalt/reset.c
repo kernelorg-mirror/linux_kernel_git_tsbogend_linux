@@ -15,7 +15,7 @@
 #include <asm/idle.h>
 #include <asm/processor.h>
 
-#include <cobalt.h>
+#include <asm/cobalt.h>
 
 #define RESET_PORT	((void __iomem *)CKSEG1ADDR(0x1c000000))
 #define RESET		0x0f

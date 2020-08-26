@@ -21,7 +21,7 @@
 #include <asm/setup.h>
 #include <asm/gt64120.h>
 
-#include <cobalt.h>
+#include <asm/cobalt.h>
 
 extern void cobalt_machine_restart(char *command);
 extern void cobalt_machine_halt(void);

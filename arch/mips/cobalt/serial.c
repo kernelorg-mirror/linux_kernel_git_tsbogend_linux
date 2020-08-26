@@ -10,7 +10,7 @@
 #include <linux/platform_device.h>
 #include <linux/serial_8250.h>
 
-#include <cobalt.h>
+#include <asm/cobalt.h>
 #include <irq.h>
 
 static struct resource cobalt_uart_resource[] __initdata = {

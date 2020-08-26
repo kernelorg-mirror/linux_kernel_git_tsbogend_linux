@@ -9,7 +9,7 @@
 #include <linux/ioport.h>
 #include <linux/platform_device.h>
 
-#include <cobalt.h>
+#include <asm/cobalt.h>
 
 static struct resource cobalt_led_resource __initdata = {
 	.start	= 0x1c000000,

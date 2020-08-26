@@ -15,8 +15,8 @@
 
 #include <asm/io.h>
 #include <asm/gt64120.h>
+#include <asm/cobalt.h>
 
-#include <cobalt.h>
 #include <irq.h>
 
 /*
