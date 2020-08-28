@@ -12,9 +12,9 @@
 #include <linux/init.h>
 
 #include <asm/mipsregs.h>
-#include <asm/mach-ralink/ralink_regs.h>
-#include <asm/mach-ralink/rt3883.h>
-#include <asm/mach-ralink/pinmux.h>
+#include <asm/ralink/ralink_regs.h>
+#include <asm/ralink/rt3883.h>
+#include <asm/ralink/pinmux.h>
 
 #include "common.h"
 

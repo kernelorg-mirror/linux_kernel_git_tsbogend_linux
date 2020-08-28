@@ -17,7 +17,7 @@
 #include <linux/platform_device.h>
 #include <linux/mod_devicetable.h>
 
-#include <asm/mach-ralink/ralink_regs.h>
+#include <asm/ralink/ralink_regs.h>
 
 #define SYSC_RSTSTAT			0x38
 #define WDT_RST_CAUSE			BIT(1)

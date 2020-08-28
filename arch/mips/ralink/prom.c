@@ -13,7 +13,7 @@
 #include <asm/bootinfo.h>
 #include <asm/addrspace.h>
 
-#include <asm/mach-ralink/ralink_regs.h>
+#include <asm/ralink/ralink_regs.h>
 
 #include "common.h"
 

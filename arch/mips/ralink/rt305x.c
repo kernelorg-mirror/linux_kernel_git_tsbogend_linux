@@ -14,9 +14,9 @@
 
 #include <asm/io.h>
 #include <asm/mipsregs.h>
-#include <asm/mach-ralink/ralink_regs.h>
-#include <asm/mach-ralink/rt305x.h>
-#include <asm/mach-ralink/pinmux.h>
+#include <asm/ralink/ralink_regs.h>
+#include <asm/ralink/rt305x.h>
+#include <asm/ralink/pinmux.h>
 
 #include "common.h"
 

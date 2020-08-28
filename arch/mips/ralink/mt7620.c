@@ -13,9 +13,9 @@
 #include <linux/bug.h>
 
 #include <asm/mipsregs.h>
-#include <asm/mach-ralink/ralink_regs.h>
-#include <asm/mach-ralink/mt7620.h>
-#include <asm/mach-ralink/pinmux.h>
+#include <asm/ralink/ralink_regs.h>
+#include <asm/ralink/mt7620.h>
+#include <asm/ralink/pinmux.h>
 
 #include "common.h"
 

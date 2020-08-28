@@ -13,10 +13,10 @@
 #include <asm/mipsregs.h>
 #include <asm/smp-ops.h>
 #include <asm/mips-cps.h>
-#include <asm/mach-ralink/ralink_regs.h>
-#include <asm/mach-ralink/mt7621.h>
+#include <asm/ralink/ralink_regs.h>
+#include <asm/ralink/mt7621.h>
 
-#include <pinmux.h>
+#include <asm/ralink/pinmux.h>
 
 #include "common.h"
 
