@@ -226,7 +226,7 @@ static int __init nlm_platform_xlpii_usb_init(void)
 
 	/* XLP 9XX, multi-node */
 	pr_info("Initializing 9XX/5XX USB Interface\n");
-	for (node = 0; node < NLM_NR_NODES; node++) {
+	for (node = 0; node < CONFIG_NLM_NR_NODES; node++) {
 		if (!nlm_node_present(node))
 			continue;
 		nlm_xlpii_usb_hw_reset(node, 1);

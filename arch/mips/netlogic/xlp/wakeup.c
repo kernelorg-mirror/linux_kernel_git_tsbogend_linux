@@ -113,7 +113,7 @@ static void xlp_enable_secondary_cores(const cpumask_t *wakeup_mask)
 	uint32_t syscoremask, mask, fusemask;
 	int core, n, cpu, ncores;
 
-	for (n = 0; n < NLM_NR_NODES; n++) {
+	for (n = 0; n < CONFIG_NLM_NR_NODES; n++) {
 		if (n != 0) {
 			/* check if node exists and is online */
 			if (cpu_is_xlp9xx()) {

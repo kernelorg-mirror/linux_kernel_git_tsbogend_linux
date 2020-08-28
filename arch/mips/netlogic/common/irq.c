@@ -297,13 +297,13 @@ static int __init xlp_of_pic_init(struct device_node *node,
 
 	if (cpu_is_xlp9xx()) {
 		bus = (res.start >> 20) & 0xf;
-		for (socid = 0; socid < NLM_NR_NODES; socid++) {
+		for (socid = 0; socid < CONFIG_NLM_NR_NODES; socid++) {
 			if (!nlm_node_present(socid))
 				continue;
 			if (nlm_get_node(socid)->socbus == bus)
 				break;
 		}
-		if (socid == NLM_NR_NODES) {
+		if (socid == CONFIG_NLM_NR_NODES) {
 			pr_err("PIC %pOFn: Node mapping for bus %d not found!\n",
 					node, bus);
 			return -EINVAL;

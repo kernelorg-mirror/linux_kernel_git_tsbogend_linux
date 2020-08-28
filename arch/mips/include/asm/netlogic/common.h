@@ -105,7 +105,7 @@ void nlm_dispatch_msix(int node, int msixirq);
  */
 static inline int nlm_irq_to_xirq(int node, int irq)
 {
-	return node * NR_IRQS / NLM_NR_NODES + irq;
+	return node * NR_IRQS / CONFIG_NLM_NR_NODES + irq;
 }
 
 #ifdef CONFIG_CPU_XLR

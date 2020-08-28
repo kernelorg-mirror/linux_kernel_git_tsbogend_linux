@@ -300,7 +300,7 @@ static int __init pcibios_init(void)
 	ioport_resource.start =	 0;
 	ioport_resource.end   = ~0;
 
-	for (n = 0; n < NLM_NR_NODES; n++) {
+	for (n = 0; n < CONFIG_NLM_NR_NODES; n++) {
 		if (!nlm_node_present(n))
 			continue;
 

@@ -336,7 +336,7 @@ static int __init nlm_ahci_init(void)
 
 	if (!cpu_is_xlp9xx())
 		return 0;
-	for (node = 0; node < NLM_NR_NODES; node++)
+	for (node = 0; node < CONFIG_NLM_NR_NODES; node++)
 		if (nlm_node_present(node))
 			nlm_sata_firmware_init(node);
 	return 0;

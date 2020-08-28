@@ -35,18 +35,6 @@
 #ifndef _NETLOGIC_MULTI_NODE_H_
 #define _NETLOGIC_MULTI_NODE_H_
 
-#ifndef CONFIG_NLM_MULTINODE
-#define NLM_NR_NODES		1
-#else
-#if defined(CONFIG_NLM_MULTINODE_2)
-#define NLM_NR_NODES		2
-#elif defined(CONFIG_NLM_MULTINODE_4)
-#define NLM_NR_NODES		4
-#else
-#define NLM_NR_NODES		1
-#endif
-#endif
-
 #define NLM_THREADS_PER_CORE	4
 
 struct nlm_soc_info {
@@ -60,9 +48,9 @@ struct nlm_soc_info {
 	unsigned int	socbus;
 };
 
-extern struct nlm_soc_info nlm_nodes[NLM_NR_NODES];
+extern struct nlm_soc_info nlm_nodes[CONFIG_NLM_NR_NODES];
 #define nlm_get_node(i)		(&nlm_nodes[i])
-#define nlm_node_present(n)	((n) >= 0 && (n) < NLM_NR_NODES && \
+#define nlm_node_present(n)	((n) >= 0 && (n) < CONFIG_NLM_NR_NODES && \
 					nlm_get_node(n)->coremask != 0)
 #ifdef CONFIG_CPU_XLR
 #define nlm_current_node()	(&nlm_nodes[0])

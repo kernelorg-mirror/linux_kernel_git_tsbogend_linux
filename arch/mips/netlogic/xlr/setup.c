@@ -58,7 +58,7 @@ struct psb_info nlm_prom_info;
 
 /* default to uniprocessor */
 unsigned int  nlm_threads_per_core = 1;
-struct nlm_soc_info nlm_nodes[NLM_NR_NODES];
+struct nlm_soc_info nlm_nodes[CONFIG_NLM_NR_NODES];
 cpumask_t nlm_cpumask = CPU_MASK_CPU0;
 
 static void nlm_linux_exit(void)

@@ -80,6 +80,12 @@ endchoice
 endif
 endif
 
+config NLM_NR_NODES
+	int
+	default "4" if NLM_MULTINODE_4
+	default "2" if NLM_MULTINODE_2
+	default "1"
+
 config NLM_COMMON
 	bool
 

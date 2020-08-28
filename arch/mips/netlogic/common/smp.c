@@ -202,7 +202,7 @@ void __init nlm_smp_setup(void)
 		cpumask_pr_args(cpu_possible_mask));
 
 	/* check with the cores we have woken up */
-	for (ncore = 0, i = 0; i < NLM_NR_NODES; i++)
+	for (ncore = 0, i = 0; i < CONFIG_NLM_NR_NODES; i++)
 		ncore += hweight32(nlm_get_node(i)->coremask);
 
 	pr_info("Detected (%dc%dt) %d Slave CPU(s)\n", ncore,

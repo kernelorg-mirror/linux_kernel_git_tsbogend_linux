@@ -49,7 +49,7 @@
 #include <asm/netlogic/xlp-hal/sys.h>
 
 uint64_t nlm_io_base;
-struct nlm_soc_info nlm_nodes[NLM_NR_NODES];
+struct nlm_soc_info nlm_nodes[CONFIG_NLM_NR_NODES];
 cpumask_t nlm_cpumask = CPU_MASK_CPU0;
 unsigned int nlm_threads_per_core;
 
