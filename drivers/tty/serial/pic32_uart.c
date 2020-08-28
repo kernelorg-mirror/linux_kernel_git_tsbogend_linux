@@ -24,7 +24,7 @@
 #include <linux/serial_core.h>
 #include <linux/delay.h>
 
-#include <asm/mach-pic32/pic32.h>
+#include <asm/pic32.h>
 #include "pic32_uart.h"
 
 /* UART name and device definitions */

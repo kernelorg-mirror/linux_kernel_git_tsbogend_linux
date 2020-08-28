@@ -6,7 +6,7 @@
 #include <linux/init.h>
 #include <linux/pm.h>
 #include <asm/reboot.h>
-#include <asm/mach-pic32/pic32.h>
+#include <asm/pic32.h>
 
 #define PIC32_RSWRST		0x10
 

@@ -9,7 +9,7 @@
 #include <linux/interrupt.h>
 #include <linux/io.h>
 #include <linux/iopoll.h>
-#include <asm/mach-pic32/pic32.h>
+#include <asm/pic32.h>
 #include <asm/traps.h>
 
 #include "clk-core.h"

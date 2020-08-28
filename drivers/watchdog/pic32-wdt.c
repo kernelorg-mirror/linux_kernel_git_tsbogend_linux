@@ -17,7 +17,7 @@
 #include <linux/pm.h>
 #include <linux/watchdog.h>
 
-#include <asm/mach-pic32/pic32.h>
+#include <asm/pic32.h>
 
 /* Watchdog Timer Registers */
 #define WDTCON_REG		0x00

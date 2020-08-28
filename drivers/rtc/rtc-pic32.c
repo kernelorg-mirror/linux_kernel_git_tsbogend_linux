@@ -16,7 +16,7 @@
 #include <linux/rtc.h>
 #include <linux/bcd.h>
 
-#include <asm/mach-pic32/pic32.h>
+#include <asm/pic32.h>
 
 #define PIC32_RTCCON		0x00
 #define PIC32_RTCCON_ON		BIT(15)
