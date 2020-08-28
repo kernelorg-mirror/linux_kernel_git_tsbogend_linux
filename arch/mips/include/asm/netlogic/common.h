@@ -54,7 +54,30 @@
 #include <linux/cpumask.h>
 #include <linux/spinlock.h>
 #include <asm/irq.h>
-#include <asm/mach-netlogic/multi-node.h>
+
+#define NLM_THREADS_PER_CORE	4
+
+struct nlm_soc_info {
+	unsigned long	coremask;	/* cores enabled on the soc */
+	unsigned long	ebase;		/* not used now */
+	uint64_t	irqmask;	/* EIMR for the node */
+	uint64_t	sysbase;	/* only for XLP - sys block base */
+	uint64_t	picbase;	/* PIC block base */
+	spinlock_t	piclock;	/* lock for PIC access */
+	cpumask_t	cpumask;	/* logical cpu mask for node */
+	unsigned int	socbus;
+};
+
+extern struct nlm_soc_info nlm_nodes[CONFIG_NLM_NR_NODES];
+#define nlm_get_node(i)		(&nlm_nodes[i])
+#define nlm_node_present(n)	((n) >= 0 && (n) < CONFIG_NLM_NR_NODES && \
+					nlm_get_node(n)->coremask != 0)
+#ifdef CONFIG_CPU_XLR
+#define nlm_current_node()	(&nlm_nodes[0])
+#else
+#define nlm_current_node()	(&nlm_nodes[nlm_nodeid()])
+#endif
+void nlm_node_init(int node);
 
 struct irq_desc;
 void nlm_smp_function_ipi_handler(struct irq_desc *desc);
