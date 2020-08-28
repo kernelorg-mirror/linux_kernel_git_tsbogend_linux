@@ -1,15 +1,17 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Ralink RT3662/RT3883 specific CPU feature overrides
+ * Ralink MT7620 specific CPU feature overrides
  *
- * Copyright (C) 2011-2013 Gabor Juhos <juhosg@openwrt.org>
+ * Copyright (C) 2008-2009 Gabor Juhos <juhosg@openwrt.org>
+ * Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
+ * Copyright (C) 2015 Felix Fietkau <nbd@openwrt.org>
  *
  * This file was derived from: include/asm-mips/cpu-features.h
  *	Copyright (C) 2003, 2004 Ralf Baechle
  *	Copyright (C) 2004 Maciej W. Rozycki
  */
-#ifndef _RT3883_CPU_FEATURE_OVERRIDES_H
-#define _RT3883_CPU_FEATURE_OVERRIDES_H
+#ifndef _RALINK_CPU_FEATURE_OVERRIDES_H
+#define _RALINK_CPU_FEATURE_OVERRIDES_H
 
 #define cpu_has_tlb		1
 #define cpu_has_4kex		1
@@ -37,14 +39,26 @@
 #define cpu_has_mips64r1	0
 #define cpu_has_mips64r2	0
 
-#define cpu_has_dsp		1
-#define cpu_has_mipsmt		0
+#define cpu_has_dsp		(IS_ENABLED(CONFIG_SOC_RT288X) ? 0 : 1)
+#define cpu_has_dsp2		0
+#define cpu_has_mipsmt		(IS_ENABLED(CONFIG_SOC_MT7621) ? 1 : 0)
 
 #define cpu_has_64bits		0
 #define cpu_has_64bit_zero_reg	0
 #define cpu_has_64bit_gp_regs	0
 
-#define cpu_dcache_line_size()	32
-#define cpu_icache_line_size()	32
+#define cpu_dcache_line_size()	(IS_ENABLED(CONFIG_SOC_RT288X) ? 16 : 32)
+#define cpu_icache_line_size()	(IS_ENABLED(CONFIG_SOC_RT288X) ? 16 : 32)
 
-#endif /* _RT3883_CPU_FEATURE_OVERRIDES_H */
+#ifdef CONFIG_SOC_MT7621
+
+#define cpu_has_dc_aliases	0
+#define cpu_has_vtag_icache	0
+
+#define cpu_has_rixi		0
+#define cpu_has_tlbinv		0
+#define cpu_has_userlocal	1
+
+#endif
+
+#endif /* _RALINK_CPU_FEATURE_OVERRIDES_H */
