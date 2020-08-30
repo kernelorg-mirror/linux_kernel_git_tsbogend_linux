@@ -10,9 +10,9 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/export.h>
-#include <bcm63xx_dev_enet.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_dev_enet.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 static const unsigned long bcm6348_regs_enetdmac[] = {
 	[ENETDMAC_CHANCFG]	= ENETDMAC_CHANCFG_REG,

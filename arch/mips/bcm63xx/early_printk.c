@@ -6,7 +6,7 @@
  * Copyright (C) 2008 Maxime Bizon <mbizon@freebox.fr>
  */
 
-#include <bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_io.h>
 #include <linux/serial_bcm63xx.h>
 #include <asm/setup.h>
 

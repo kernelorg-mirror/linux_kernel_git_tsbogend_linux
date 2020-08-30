@@ -13,10 +13,10 @@
 #include <linux/clk.h>
 #include <linux/clkdev.h>
 #include <linux/delay.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_reset.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_reset.h>
 
 struct clk {
 	void		(*set)(struct clk *, int);

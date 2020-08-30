@@ -27,10 +27,10 @@
 #include <linux/resource.h>
 #include <linux/platform_device.h>
 
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_timer.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_timer.h>
 
 #define PFX KBUILD_MODNAME
 

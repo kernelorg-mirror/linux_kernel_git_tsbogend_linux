@@ -5,7 +5,7 @@
 #include <linux/types.h>
 #include <linux/timer.h>
 #include <pcmcia/ss.h>
-#include <bcm63xx_dev_pcmcia.h>
+#include <asm/broadcom/bcm63xx_dev_pcmcia.h>
 
 /* socket polling rate in ms */
 #define BCM63XX_PCMCIA_POLL_RATE	500

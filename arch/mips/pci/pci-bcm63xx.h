@@ -2,10 +2,10 @@
 #ifndef PCI_BCM63XX_H_
 #define PCI_BCM63XX_H_
 
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_dev_pci.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_dev_pci.h>
 
 /*
  * Cardbus shares  the PCI bus, but has	 no IDSEL, so a	 special id is

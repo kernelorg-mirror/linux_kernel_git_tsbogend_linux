@@ -8,9 +8,9 @@
 #include <linux/phy.h>
 #include <linux/platform_device.h>
 
-#include <bcm63xx_regs.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_iudma.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_iudma.h>
 
 /* default number of descriptor */
 #define BCMENET_DEF_RX_DESC	64

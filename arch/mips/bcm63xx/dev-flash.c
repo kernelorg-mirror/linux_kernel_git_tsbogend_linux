@@ -17,10 +17,10 @@
 #include <linux/mtd/partitions.h>
 #include <linux/mtd/physmap.h>
 
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_dev_flash.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_dev_flash.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_io.h>
 
 static struct mtd_partition mtd_partitions[] = {
 	{

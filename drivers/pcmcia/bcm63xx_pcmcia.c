@@ -16,8 +16,8 @@
 #include <linux/pci.h>
 #include <linux/gpio.h>
 
-#include <bcm63xx_regs.h>
-#include <bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_io.h>
 #include "bcm63xx_pcmcia.h"
 
 #define PFX	"bcm63xx_pcmcia: "

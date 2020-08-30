@@ -9,7 +9,7 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
-#include <bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
 
 static struct resource wdt_resources[] = {
 	{

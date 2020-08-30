@@ -18,7 +18,7 @@
 #include <linux/platform_device.h>
 #include <linux/if_vlan.h>
 
-#include <bcm63xx_dev_enet.h>
+#include <asm/broadcom/bcm63xx_dev_enet.h>
 #include "bcm63xx_enet.h"
 
 static char bcm_enet_driver_name[] = "bcm63xx_enet";

@@ -31,11 +31,11 @@
 #include <linux/usb/gadget.h>
 #include <linux/workqueue.h>
 
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_iudma.h>
-#include <bcm63xx_dev_usb_usbd.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_iudma.h>
+#include <asm/broadcom/bcm63xx_dev_usb_usbd.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 #define DRV_MODULE_NAME		"bcm63xx_udc"
 

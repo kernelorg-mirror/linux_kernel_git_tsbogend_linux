@@ -11,10 +11,10 @@
 #include <linux/export.h>
 #include <linux/spinlock.h>
 #include <linux/log2.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_cs.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_cs.h>
 
 static DEFINE_SPINLOCK(bcm63xx_cs_lock);
 

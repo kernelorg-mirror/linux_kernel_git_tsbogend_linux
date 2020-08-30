@@ -12,8 +12,8 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_dev_usb_usbd.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_dev_usb_usbd.h>
 
 #define NUM_MMIO		2
 #define NUM_IRQ			7

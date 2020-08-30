@@ -12,10 +12,10 @@
 #include <linux/err.h>
 #include <linux/clk.h>
 #include <linux/delay.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_reset.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_reset.h>
 
 #define __GEN_RESET_BITS_TABLE(__cpu)					\
 	[BCM63XX_RESET_SPI]		= BCM## __cpu ##_RESET_SPI,	\

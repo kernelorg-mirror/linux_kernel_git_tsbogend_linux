@@ -13,10 +13,10 @@
 #include <linux/spinlock.h>
 #include <linux/interrupt.h>
 #include <linux/clk.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_timer.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_timer.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 static DEFINE_RAW_SPINLOCK(timer_reg_lock);
 static DEFINE_RAW_SPINLOCK(timer_data_lock);

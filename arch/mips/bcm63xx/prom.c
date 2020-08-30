@@ -13,10 +13,10 @@
 #include <asm/bmips.h>
 #include <asm/smp-ops.h>
 #include <asm/mipsregs.h>
-#include <bcm63xx_board.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_board.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 void __init prom_init(void)
 {

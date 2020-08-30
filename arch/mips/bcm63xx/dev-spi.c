@@ -14,9 +14,9 @@
 #include <linux/err.h>
 #include <linux/clk.h>
 
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_dev_spi.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_dev_spi.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 static struct resource spi_resources[] = {
 	{

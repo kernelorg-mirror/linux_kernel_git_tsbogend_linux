@@ -8,7 +8,7 @@
 
 #include <linux/types.h>
 #include <linux/pci.h>
-#include <bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
 
 int pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
 {

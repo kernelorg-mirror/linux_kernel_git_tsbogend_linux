@@ -13,10 +13,10 @@
 #include <asm/cpu.h>
 #include <asm/cpu-info.h>
 #include <asm/mipsregs.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_irq.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_irq.h>
 
 const unsigned long *bcm63xx_regs_base;
 EXPORT_SYMBOL(bcm63xx_regs_base);

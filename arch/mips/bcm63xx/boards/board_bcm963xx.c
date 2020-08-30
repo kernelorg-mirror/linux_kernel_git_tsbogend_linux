@@ -12,20 +12,20 @@
 #include <linux/platform_device.h>
 #include <linux/ssb/ssb.h>
 #include <asm/addrspace.h>
-#include <bcm63xx_board.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_dev_uart.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_nvram.h>
-#include <bcm63xx_dev_pci.h>
-#include <bcm63xx_dev_enet.h>
-#include <bcm63xx_dev_flash.h>
-#include <bcm63xx_dev_hsspi.h>
-#include <bcm63xx_dev_pcmcia.h>
-#include <bcm63xx_dev_spi.h>
-#include <bcm63xx_dev_usb_usbd.h>
-#include <board_bcm963xx.h>
+#include <asm/broadcom/bcm63xx_board.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_dev_uart.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_nvram.h>
+#include <asm/broadcom/bcm63xx_dev_pci.h>
+#include <asm/broadcom/bcm63xx_dev_enet.h>
+#include <asm/broadcom/bcm63xx_dev_flash.h>
+#include <asm/broadcom/bcm63xx_dev_hsspi.h>
+#include <asm/broadcom/bcm63xx_dev_pcmcia.h>
+#include <asm/broadcom/bcm63xx_dev_spi.h>
+#include <asm/broadcom/bcm63xx_dev_usb_usbd.h>
+#include <asm/broadcom/board_bcm963xx.h>
 
 #include <uapi/linux/bcm933xx_hcs.h>
 

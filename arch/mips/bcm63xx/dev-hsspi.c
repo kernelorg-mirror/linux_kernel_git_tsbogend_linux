@@ -10,9 +10,9 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_dev_hsspi.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_dev_hsspi.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 static struct resource spi_resources[] = {
 	{

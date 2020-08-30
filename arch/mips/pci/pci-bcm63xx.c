@@ -14,7 +14,7 @@
 #include <linux/clk.h>
 #include <asm/bootinfo.h>
 
-#include <bcm63xx_reset.h>
+#include <asm/broadcom/bcm63xx_reset.h>
 
 #include "pci-bcm63xx.h"
 

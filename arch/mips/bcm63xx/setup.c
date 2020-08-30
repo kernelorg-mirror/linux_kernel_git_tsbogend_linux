@@ -16,11 +16,11 @@
 #include <asm/time.h>
 #include <asm/reboot.h>
 #include <asm/cacheflush.h>
-#include <bcm63xx_board.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_regs.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_gpio.h>
+#include <asm/broadcom/bcm63xx_board.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_gpio.h>
 
 void bcm63xx_machine_halt(void)
 {

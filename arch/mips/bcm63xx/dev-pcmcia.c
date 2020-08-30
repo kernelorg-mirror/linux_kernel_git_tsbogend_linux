@@ -10,11 +10,11 @@
 #include <linux/kernel.h>
 #include <asm/bootinfo.h>
 #include <linux/platform_device.h>
-#include <bcm63xx_cs.h>
-#include <bcm63xx_cpu.h>
-#include <bcm63xx_dev_pcmcia.h>
-#include <bcm63xx_io.h>
-#include <bcm63xx_regs.h>
+#include <asm/broadcom/bcm63xx_cs.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_dev_pcmcia.h>
+#include <asm/broadcom/bcm63xx_io.h>
+#include <asm/broadcom/bcm63xx_regs.h>
 
 static struct resource pcmcia_resources[] = {
 	/* pcmcia registers */

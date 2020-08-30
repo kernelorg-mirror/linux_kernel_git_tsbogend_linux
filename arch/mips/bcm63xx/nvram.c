@@ -17,7 +17,8 @@
 #include <linux/kernel.h>
 #include <linux/if_ether.h>
 
-#include <bcm63xx_nvram.h>
+#include <asm/broadcom/bcm63xx_cpu.h>
+#include <asm/broadcom/bcm63xx_nvram.h>
 
 #define BCM63XX_DEFAULT_PSI_SIZE	64
 
