@@ -7,8 +7,7 @@
 #include <linux/irq.h>
 #include <asm/irq_cpu.h>
 
-#include <loongson1.h>
-#include <irq.h>
+#include <asm/loongson/32/loongson1.h>
 
 #define LS1X_INTC_REG(n, x) \
 		((void __iomem *)KSEG1ADDR(LS1X_INTC_BASE + (n * 0x18) + (x)))

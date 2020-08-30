@@ -8,8 +8,8 @@
 
 #include <linux/platform_device.h>
 
-#include <dma.h>
-#include <nand.h>
+#include <asm/loongson/32/dma.h>
+#include <asm/loongson/32/nand.h>
 
 extern struct platform_device ls1x_uart_pdev;
 extern struct platform_device ls1x_cpufreq_pdev;

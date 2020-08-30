@@ -11,7 +11,7 @@
 #include <linux/serial_reg.h>
 #include <asm/fw/fw.h>
 
-#include <loongson1.h>
+#include <asm/loongson/32/loongson1.h>
 
 unsigned long memsize;
 

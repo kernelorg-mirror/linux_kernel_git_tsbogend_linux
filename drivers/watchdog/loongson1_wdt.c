@@ -7,7 +7,7 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 #include <linux/watchdog.h>
-#include <loongson1.h>
+#include <asm/loongson/32/loongson1.h>
 
 #define DEFAULT_HEARTBEAT	30
 

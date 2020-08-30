@@ -8,7 +8,7 @@
 #include <linux/io.h>
 #include <linux/err.h>
 
-#include <loongson1.h>
+#include <asm/loongson/32/loongson1.h>
 #include "clk.h"
 
 #define OSC		(33 * 1000000)

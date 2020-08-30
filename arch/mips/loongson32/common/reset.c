@@ -9,7 +9,7 @@
 #include <asm/idle.h>
 #include <asm/reboot.h>
 
-#include <loongson1.h>
+#include <asm/loongson/32/loongson1.h>
 
 static void __iomem *wdt_reg_base;
 

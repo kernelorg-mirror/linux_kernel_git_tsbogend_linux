@@ -7,10 +7,10 @@
 #include <linux/mtd/partitions.h>
 #include <linux/sizes.h>
 
-#include <loongson1.h>
-#include <dma.h>
-#include <nand.h>
-#include <platform.h>
+#include <asm/loongson/32/loongson1.h>
+#include <asm/loongson/32/dma.h>
+#include <asm/loongson/32/nand.h>
+#include <asm/loongson/32/platform.h>
 
 static const struct gpio_led ls1x_gpio_leds[] __initconst = {
 	{

@@ -7,7 +7,7 @@
 #include <linux/clk-provider.h>
 #include <linux/io.h>
 
-#include <loongson1.h>
+#include <asm/loongson/32/loongson1.h>
 #include "clk.h"
 
 #define OSC		(24 * 1000000)

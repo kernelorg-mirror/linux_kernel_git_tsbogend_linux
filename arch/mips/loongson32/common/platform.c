@@ -13,11 +13,11 @@
 #include <linux/stmmac.h>
 #include <linux/usb/ehci_pdriver.h>
 
-#include <platform.h>
-#include <loongson1.h>
-#include <cpufreq.h>
-#include <dma.h>
-#include <nand.h>
+#include <asm/loongson/32/platform.h>
+#include <asm/loongson/32/loongson1.h>
+#include <asm/loongson/32/cpufreq.h>
+#include <asm/loongson/32/dma.h>
+#include <asm/loongson/32/nand.h>
 
 /* 8250/16550 compatible UART */
 #define LS1X_UART(_id)						\

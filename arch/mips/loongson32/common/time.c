@@ -8,8 +8,8 @@
 #include <linux/sizes.h>
 #include <asm/time.h>
 
-#include <loongson1.h>
-#include <platform.h>
+#include <asm/loongson/32/loongson1.h>
+#include <asm/loongson/32/platform.h>
 
 #ifdef CONFIG_CEVT_CSRC_LS1X
 

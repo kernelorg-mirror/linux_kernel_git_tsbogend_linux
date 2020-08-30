@@ -3,7 +3,7 @@
  * Copyright (c) 2016 Yang Ling <gnaygnil@gmail.com>
  */
 
-#include <platform.h>
+#include <asm/loongson/32/platform.h>
 
 static struct platform_device *ls1c_platform_devices[] __initdata = {
 	&ls1x_uart_pdev,

@@ -18,8 +18,8 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 
-#include <cpufreq.h>
-#include <loongson1.h>
+#include <asm/loongson/32/cpufreq.h>
+#include <asm/loongson/32/loongson1.h>
 
 struct ls1x_cpufreq {
 	struct device *dev;
