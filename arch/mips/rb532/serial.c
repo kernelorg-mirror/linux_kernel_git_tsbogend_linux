@@ -32,7 +32,8 @@
 #include <linux/irq.h>
 
 #include <asm/serial.h>
-#include <asm/mach-rc32434/rb.h>
+#include <asm/rc32434/rb.h>
+#include <asm/rc32434/irq.h>
 
 extern unsigned int idt_cpu_freq;
 

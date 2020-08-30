@@ -1,7 +1,7 @@
 /*
- *  Definitions for the Watchdog registers
+ *  Definitions for timer registers
  *
- *  Copyright 2002 Ryan Holm <ryan.holmQVist@idt.com>
+ *  Copyright 2004 Philip Rischel <rischelp@idt.com>
  *  Copyright 2008 Florian Fainelli <florian@openwrt.org>
  *
  *  This program is free software; you can redistribute  it and/or modify it
@@ -26,34 +26,40 @@
  *
  */
 
-#ifndef __RC32434_INTEG_H__
-#define __RC32434_INTEG_H__
+#ifndef __ASM_RC32434_TIMER_H
+#define __ASM_RC32434_TIMER_H
 
-#include <asm/mach-rc32434/rb.h>
+#include <asm/rc32434/rb.h>
 
-#define INTEG0_BASE_ADDR	0x18030030
+#define TIMER0_BASE_ADDR		0x18028000
+#define TIMER_COUNT			3
 
-struct integ {
-	u32 errcs;			/* sticky use ERRCS_ */
-	u32 wtcount;			/* Watchdog timer count reg. */
-	u32 wtcompare;			/* Watchdog timer timeout value. */
-	u32 wtc;			/* Watchdog timer control. use WTC_ */
+struct timer_counter {
+	u32 count;
+	u32 compare;
+	u32 ctc;		/*use CTC_ */
 };
 
-/* Error counters */
-#define RC32434_ERR_WTO		0
-#define RC32434_ERR_WNE		1
-#define RC32434_ERR_UCW		2
-#define RC32434_ERR_UCR		3
-#define RC32434_ERR_UPW		4
-#define RC32434_ERR_UPR		5
-#define RC32434_ERR_UDW		6
-#define RC32434_ERR_UDR		7
-#define RC32434_ERR_SAE		8
-#define RC32434_ERR_WRE		9
+struct timer {
+	struct timer_counter tim[TIMER_COUNT];
+	u32 rcount;	/* use RCOUNT_ */
+	u32 rcompare;	/* use RCOMPARE_ */
+	u32 rtc;	/* use RTC_ */
+};
 
-/* Watchdog control bits */
-#define RC32434_WTC_EN		0
-#define RC32434_WTC_TO		1
+#define RC32434_CTC_EN_BIT		0
+#define RC32434_CTC_TO_BIT		1
 
-#endif	/* __RC32434_INTEG_H__ */
+/* Real time clock registers */
+#define RC32434_RTC_MSK(x)		BIT_TO_MASK(x)
+#define RC32434_RTC_CE_BIT		0
+#define RC32434_RTC_TO_BIT		1
+#define RC32434_RTC_RQE_BIT		2
+
+/* Counter registers */
+#define RC32434_RCOUNT_BIT		0
+#define RC32434_RCOUNT_MSK		0x0000ffff
+#define RC32434_RCOMP_BIT		0
+#define RC32434_RCOMP_MSK		0x0000ffff
+
+#endif	/* __ASM_RC32434_TIMER_H */

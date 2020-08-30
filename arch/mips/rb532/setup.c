@@ -11,8 +11,8 @@
 #include <asm/time.h>
 #include <linux/ioport.h>
 
-#include <asm/mach-rc32434/rb.h>
-#include <asm/mach-rc32434/pci.h>
+#include <asm/rc32434/rb.h>
+#include <asm/rc32434/pci.h>
 
 struct pci_reg __iomem *pci_reg;
 EXPORT_SYMBOL(pci_reg);

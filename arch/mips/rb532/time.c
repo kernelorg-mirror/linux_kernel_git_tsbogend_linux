@@ -17,7 +17,7 @@
 
 #include <asm/mipsregs.h>
 #include <asm/time.h>
-#include <asm/mach-rc32434/rc32434.h>
+#include <asm/rc32434/rc32434.h>
 
 extern unsigned int idt_cpu_freq;
 

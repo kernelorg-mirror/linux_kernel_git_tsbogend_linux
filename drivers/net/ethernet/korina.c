@@ -60,10 +60,10 @@
 #include <asm/io.h>
 #include <asm/dma.h>
 
-#include <asm/mach-rc32434/rb.h>
-#include <asm/mach-rc32434/rc32434.h>
-#include <asm/mach-rc32434/eth.h>
-#include <asm/mach-rc32434/dma_v.h>
+#include <asm/rc32434/rb.h>
+#include <asm/rc32434/rc32434.h>
+#include <asm/rc32434/eth.h>
+#include <asm/rc32434/dma_v.h>
 
 #define DRV_NAME	"korina"
 #define DRV_VERSION	"0.20"

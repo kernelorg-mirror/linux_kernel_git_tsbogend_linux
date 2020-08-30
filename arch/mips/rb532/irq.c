@@ -42,8 +42,8 @@
 #include <asm/time.h>
 #include <asm/mipsregs.h>
 
-#include <asm/mach-rc32434/irq.h>
-#include <asm/mach-rc32434/gpio.h>
+#include <asm/rc32434/irq.h>
+#include <asm/rc32434/gpio.h>
 
 struct intr_group {
 	u32 mask;	/* mask of valid bits in pending/mask registers */

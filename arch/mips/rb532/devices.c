@@ -21,14 +21,14 @@
 
 #include <asm/bootinfo.h>
 
-#include <asm/mach-rc32434/rc32434.h>
-#include <asm/mach-rc32434/dma.h>
-#include <asm/mach-rc32434/dma_v.h>
-#include <asm/mach-rc32434/eth.h>
-#include <asm/mach-rc32434/rb.h>
-#include <asm/mach-rc32434/integ.h>
-#include <asm/mach-rc32434/gpio.h>
-#include <asm/mach-rc32434/irq.h>
+#include <asm/rc32434/rc32434.h>
+#include <asm/rc32434/dma.h>
+#include <asm/rc32434/dma_v.h>
+#include <asm/rc32434/eth.h>
+#include <asm/rc32434/rb.h>
+#include <asm/rc32434/integ.h>
+#include <asm/rc32434/gpio.h>
+#include <asm/rc32434/irq.h>
 
 #define ETH0_RX_DMA_ADDR  (DMA0_BASE_ADDR + 0 * DMA_CHAN_OFFSET)
 #define ETH0_TX_DMA_ADDR  (DMA0_BASE_ADDR + 1 * DMA_CHAN_OFFSET)

@@ -10,8 +10,8 @@
 #include <linux/platform_device.h>
 #include <linux/gpio.h>
 
-#include <asm/mach-rc32434/gpio.h>
-#include <asm/mach-rc32434/rb.h>
+#include <asm/rc32434/gpio.h>
+#include <asm/rc32434/rb.h>
 
 #define DRV_NAME "rb532-button"
 
