@@ -2,8 +2,8 @@
 #include "bcm47xx_private.h"
 
 #include <linux/gpio.h>
-#include <bcm47xx_board.h>
-#include <bcm47xx.h>
+#include <asm/broadcom/bcm47xx_board.h>
+#include <asm/broadcom/bcm47xx.h>
 
 static void __init bcm47xx_workarounds_enable_usb_power(int usb_power)
 {

@@ -293,7 +293,7 @@ static inline void b53_arl_from_entry(u64 *mac_vid, u32 *fwd_entry,
 #ifdef CONFIG_BCM47XX
 
 #include <linux/bcm47xx_nvram.h>
-#include <bcm47xx_board.h>
+#include <asm/broadcom/bcm47xx_board.h>
 static inline int b53_switch_get_reset_gpio(struct b53_device *dev)
 {
 	enum bcm47xx_board board = bcm47xx_board_get();

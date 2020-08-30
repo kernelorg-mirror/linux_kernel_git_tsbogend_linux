@@ -29,7 +29,7 @@
 #include <linux/irq.h>
 #include <asm/setup.h>
 #include <asm/irq_cpu.h>
-#include <bcm47xx.h>
+#include <asm/broadcom/bcm47xx.h>
 
 asmlinkage void plat_irq_dispatch(void)
 {

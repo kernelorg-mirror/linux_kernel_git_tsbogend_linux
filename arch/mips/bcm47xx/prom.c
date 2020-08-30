@@ -33,8 +33,8 @@
 #include <linux/ssb/ssb_regs.h>
 #include <linux/smp.h>
 #include <asm/bootinfo.h>
-#include <bcm47xx.h>
-#include <bcm47xx_board.h>
+#include <asm/broadcom/bcm47xx.h>
+#include <asm/broadcom/bcm47xx_board.h>
 
 static char bcm47xx_system_type[20] = "Broadcom BCM47XX";
 

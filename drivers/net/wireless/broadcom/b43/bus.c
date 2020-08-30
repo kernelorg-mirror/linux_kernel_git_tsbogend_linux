@@ -10,7 +10,7 @@
 */
 
 #ifdef CONFIG_BCM47XX_BCMA
-#include <asm/mach-bcm47xx/bcm47xx.h>
+#include <asm/broadcom/bcm47xx.h>
 #endif
 
 #include "b43.h"

@@ -2,7 +2,7 @@
 #include "bcm47xx_private.h"
 
 #include <linux/leds.h>
-#include <bcm47xx_board.h>
+#include <asm/broadcom/bcm47xx_board.h>
 
 /**************************************************
  * Database

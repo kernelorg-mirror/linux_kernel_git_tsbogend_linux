@@ -13,7 +13,7 @@
 #include <linux/serial.h>
 #include <linux/serial_8250.h>
 #include <linux/ssb/ssb.h>
-#include <bcm47xx.h>
+#include <asm/broadcom/bcm47xx.h>
 
 static struct plat_serial8250_port uart8250_data[5];
 

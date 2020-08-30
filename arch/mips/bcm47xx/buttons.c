@@ -4,8 +4,8 @@
 #include <linux/input.h>
 #include <linux/gpio_keys.h>
 #include <linux/interrupt.h>
-#include <bcm47xx_board.h>
-#include <bcm47xx.h>
+#include <asm/broadcom/bcm47xx_board.h>
+#include <asm/broadcom/bcm47xx.h>
 
 /**************************************************
  * Database
