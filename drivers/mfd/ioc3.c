@@ -500,6 +500,62 @@ static int ip34_sysboard_setup(struct ioc3_priv_data *ipd)
 	return ioc3_kbd_setup(ipd);
 }
 
+static int ip35_ibrick_setup(struct ioc3_priv_data *ipd)
+{
+	int ret, io_irq;
+
+	io_irq = ioc3_map_irq(ipd->pdev, PCI_SLOT(ipd->pdev->devfn),
+			      PCI_INTERRUPT_INTB);
+	ret = ioc3_irq_domain_setup(ipd, io_irq);
+	if (ret)
+		return ret;
+
+	ret = ioc3_eth_setup(ipd);
+	if (ret)
+		return ret;
+
+	/* Set gpio pins for RS232/RS422 mode selection */
+	writel(GPCR_UARTA_MODESEL, &ipd->regs->gpcr_s);
+	/* Select RS232 mode for uart a */
+	writel(0, &ipd->regs->gppr[6]);
+
+	/* Switch port a to 16650 mode */
+	writel(readl(&ipd->regs->port_a.sscr) & ~SSCR_DMA_EN,
+	       &ipd->regs->port_a.sscr);
+	udelay(1000); /* Wait until mode switch is done */
+
+	ret = mfd_add_devices(&ipd->pdev->dev, PLATFORM_DEVID_AUTO,
+			      ioc3_serial_cells, 1,
+			      &ipd->pdev->resource[0], 0, ipd->domain);
+	if (ret) {
+		dev_err(&ipd->pdev->dev, "Failed to add 16550 subdevs\n");
+		return ret;
+	}
+
+	return ioc3_m48t35_setup(ipd);
+}
+
+static int ip35_io8_setup(struct ioc3_priv_data *ipd)
+{
+	int ret, io_irq;
+
+	io_irq = ioc3_map_irq(ipd->pdev, PCI_SLOT(ipd->pdev->devfn),
+			      PCI_INTERRUPT_INTB);
+	ret = ioc3_irq_domain_setup(ipd, io_irq);
+	if (ret)
+		return ret;
+
+	ret = ioc3_eth_setup(ipd);
+	if (ret)
+		return ret;
+
+	ret = ioc3_serial_setup(ipd);
+	if (ret)
+		return ret;
+
+	return ioc3_m48t35_setup(ipd);
+}
+
 static int ioc3_menet_setup(struct ioc3_priv_data *ipd)
 {
 	int ret, io_irq;
@@ -558,6 +614,8 @@ static struct {
 	IOC3_SID("IP29 System Board", IP29_SYSBOARD, &ip27_baseio6g_setup),
 	IOC3_SID("IP30 System Board", IP30_SYSBOARD, &ip30_sysboard_setup),
 	IOC3_SID("IP34 Fuel", IP34_SYSBOARD, &ip34_sysboard_setup),
+	IOC3_SID("IP35 IBRICK", IO7, &ip35_ibrick_setup),
+	IOC3_SID("IP35 IO8", IO8, &ip35_io8_setup),
 	IOC3_SID("MENET", MENET, &ioc3_menet_setup),
 	IOC3_SID("MENET4", MENET4, &ioc3_menet4_setup)
 };
