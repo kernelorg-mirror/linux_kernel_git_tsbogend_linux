@@ -30,8 +30,8 @@
 #include <linux/platform_device.h>
 #include <linux/reset.h>
 #include <linux/sys_soc.h>
-#include <mt7621.h>
-#include <ralink_regs.h>
+#include <asm/ralink/mt7621.h>
+#include <asm/ralink/ralink_regs.h>
 
 #include "../../pci/pci.h"
 
