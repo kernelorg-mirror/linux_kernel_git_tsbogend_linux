@@ -1394,7 +1394,8 @@ int hmm_bo_mmap(struct vm_area_struct *vma, struct hmm_buffer_object *bo)
 	virt = vma->vm_start;
 	for (i = 0; i < pgnr; i++) {
 		pfn = page_to_pfn(bo->page_obj[i].page);
-		if (remap_pfn_range(vma, virt, pfn, PAGE_SIZE, PAGE_SHARED)) {
+		if (remap_pfn_range(vma, virt, pfn, PAGE_SIZE,
+				    vma->vm_page_prot)) {
 			dev_warn(atomisp_dev,
 				 "remap_pfn_range failed: virt = 0x%x, pfn = 0x%x, mapped_pgnr = %d\n",
 				 virt, pfn, 1);

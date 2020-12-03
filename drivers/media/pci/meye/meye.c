@@ -1464,7 +1464,8 @@ static int meye_mmap(struct file *file, struct vm_area_struct *vma)
 
 	while (size > 0) {
 		page = vmalloc_to_pfn((void *)pos);
-		if (remap_pfn_range(vma, start, page, PAGE_SIZE, PAGE_SHARED)) {
+		if (remap_pfn_range(vma, start, page, PAGE_SIZE,
+				    vma->vm_page_prot)) {
 			mutex_unlock(&meye.lock);
 			return -EAGAIN;
 		}

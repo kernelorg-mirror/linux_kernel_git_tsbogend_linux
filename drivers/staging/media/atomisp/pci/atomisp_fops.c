@@ -1037,7 +1037,7 @@ static int do_isp_mm_remap(struct atomisp_device *isp,
 	while (pgnr) {
 		pfn = hmm_virt_to_phys(isp_virt) >> PAGE_SHIFT;
 		if (remap_pfn_range(vma, host_virt, pfn,
-				    PAGE_SIZE, PAGE_SHARED)) {
+				    PAGE_SIZE, vma->vm_page_prot)) {
 			dev_err(isp->dev, "remap_pfn_range err.\n");
 			return -EAGAIN;
 		}
