@@ -2407,7 +2407,8 @@ int cpia2_remap_buffer(struct camera_data *cam, struct vm_area_struct *vma)
 	pos = ((unsigned long) (cam->frame_buffer)) + start_offset;
 	while (size > 0) {
 		page = kvirt_to_pa(pos);
-		if (remap_pfn_range(vma, start, page >> PAGE_SHIFT, PAGE_SIZE, PAGE_SHARED))
+		if (remap_pfn_range(vma, start, page >> PAGE_SHIFT, PAGE_SIZE,
+				    vma->vm_page_prot))
 			return -EAGAIN;
 		start += PAGE_SIZE;
 		pos += PAGE_SIZE;
