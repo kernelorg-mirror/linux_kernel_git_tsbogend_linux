@@ -2396,7 +2396,7 @@ static int comedi_mmap(struct file *file, struct vm_area_struct *vma)
 			buf = &bm->page_list[i];
 			pfn = page_to_pfn(virt_to_page(buf->virt_addr));
 			retval = remap_pfn_range(vma, start, pfn, PAGE_SIZE,
-						 PAGE_SHARED);
+						 vma->vm_page_prot);
 			if (retval)
 				break;
 
