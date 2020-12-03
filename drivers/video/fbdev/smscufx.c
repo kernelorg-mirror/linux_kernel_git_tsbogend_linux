@@ -793,7 +793,8 @@ static int ufx_ops_mmap(struct fb_info *info, struct vm_area_struct *vma)
 
 	while (size > 0) {
 		page = vmalloc_to_pfn((void *)pos);
-		if (remap_pfn_range(vma, start, page, PAGE_SIZE, PAGE_SHARED))
+		if (remap_pfn_range(vma, start, page, PAGE_SIZE,
+				    vma->vm_page_prot))
 			return -EAGAIN;
 
 		start += PAGE_SIZE;
