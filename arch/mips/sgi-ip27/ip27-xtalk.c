@@ -23,7 +23,8 @@
 #define XXBOW_WIDGET_PART_NUM	0xd000	/* Xbow in Xbridge */
 #define BASE_XBOW_PORT		8     /* Lowest external port */
 
-static void bridge_platform_create(nasid_t nasid, int widget, int masterwid)
+static void bridge_platform_create(nasid_t nasid, int widget, int masterwid,
+				   int offs)
 {
 	struct xtalk_bridge_platform_data *bd;
 	struct sgi_w1_platform_data *wd;
@@ -41,10 +42,10 @@ static void bridge_platform_create(nasid_t nasid, int widget, int masterwid)
 	}
 
 	snprintf(wd->dev_id, sizeof(wd->dev_id), "bridge-%012lx",
-		 offset + (widget << SWIN_SIZE_BITS));
+		 offset + (widget << SWIN_SIZE_BITS) + offs);
 
 	memset(&w1_res, 0, sizeof(w1_res));
-	w1_res.start = offset + (widget << SWIN_SIZE_BITS) +
+	w1_res.start = offset + (widget << SWIN_SIZE_BITS) + offs +
 				offsetof(struct bridge_regs, b_nic);
 	w1_res.end = w1_res.start + 3;
 	w1_res.flags = IORESOURCE_MEM;
@@ -81,22 +82,22 @@ static void bridge_platform_create(nasid_t nasid, int widget, int masterwid)
 	}
 
 
-	bd->bridge_addr = RAW_NODE_SWIN_BASE(nasid, widget);
+	bd->bridge_addr = RAW_NODE_SWIN_BASE(nasid, widget) + offs;
 	bd->intr_addr	= BIT_ULL(47) + 0x01800000 + PI_INT_PEND_MOD;
 	bd->nasid	= nasid;
 	bd->masterwid	= masterwid;
 
 	bd->mem.name	= "Bridge PCI MEM";
-	bd->mem.start	= offset + (widget << SWIN_SIZE_BITS) + BRIDGE_DEVIO0;
-	bd->mem.end	= offset + (widget << SWIN_SIZE_BITS) + SWIN_SIZE - 1;
+	bd->mem.start	= offset + (widget << SWIN_SIZE_BITS) + offs + BRIDGE_DEVIO0;
+	bd->mem.end	= offset + (widget << SWIN_SIZE_BITS) + offs + (SWIN_SIZE / 2) - 1;
 	bd->mem.flags	= IORESOURCE_MEM;
-	bd->mem_offset	= offset;
+	bd->mem_offset	= offset + offs;
 
 	bd->io.name	= "Bridge PCI IO";
-	bd->io.start	= offset + (widget << SWIN_SIZE_BITS) + BRIDGE_DEVIO0;
-	bd->io.end	= offset + (widget << SWIN_SIZE_BITS) + SWIN_SIZE - 1;
+	bd->io.start	= offset + (widget << SWIN_SIZE_BITS) + offs + BRIDGE_DEVIO0;
+	bd->io.end	= offset + (widget << SWIN_SIZE_BITS) + offs + (SWIN_SIZE / 2) - 1;
 	bd->io.flags	= IORESOURCE_IO;
-	bd->io_offset	= offset;
+	bd->io_offset	= offset + offs;
 
 	if (platform_device_add_data(pdev_bd, bd, sizeof(*bd))) {
 		pr_warn("xtalk:n%d/%x bridge failed to add platform data.\n", nasid, widget);
@@ -137,7 +138,11 @@ static int probe_one_port(nasid_t nasid, int widget, int masterwid)
 	switch (partnum) {
 	case BRIDGE_WIDGET_PART_NUM:
 	case XBRIDGE_WIDGET_PART_NUM:
-		bridge_platform_create(nasid, widget, masterwid);
+		bridge_platform_create(nasid, widget, masterwid, 0);
+		break;
+	case 0xd102: /* PIC_WIDGET_PART_NUM: */
+		bridge_platform_create(nasid, widget, masterwid, 0);
+		bridge_platform_create(nasid, widget, masterwid, 0x800000);
 		break;
 	default:
 		pr_info("xtalk:n%d/%d unknown widget (0x%x)\n",
@@ -217,10 +222,17 @@ static void xtalk_probe_node(nasid_t nasid)
 
 	switch (partnum) {
 	case BRIDGE_WIDGET_PART_NUM:
-		bridge_platform_create(nasid, 0x8, 0xa);
+		bridge_platform_create(nasid, 0x8, 0xa, 0);
 		break;
+#if 0
+	case 0xd100: /* PIC_WIDGET_PART_NUM: */
+		bridge_platform_create(nasid, 0x0, 0xa, 0);
+	//	bridge_platform_create(nasid, 0x0, 0xa, 0x800000);
+		break;
+#endif
 	case XBOW_WIDGET_PART_NUM:
 	case XXBOW_WIDGET_PART_NUM:
+	case 0xd100: /* PIC_WIDGET_PART_NUM: */
 		pr_info("xtalk:n%d/0 xbow widget\n", nasid);
 		xbow_probe(nasid);
 		break;

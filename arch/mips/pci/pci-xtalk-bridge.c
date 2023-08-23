@@ -390,9 +390,15 @@ static int bridge_domain_activate(struct irq_domain *domain,
 	int pin = irqd->hwirq;
 	u32 device;
 
+#if 0
 	bridge_write(bc, b_int_addr[pin].addr,
 		     (((bc->intr_addr >> 30) & 0x30000) |
 		      bit | (data->nasid << 8)));
+#else
+	//bridge_write(bc, b_int_addr[pin].addr, bc->intr_addr | (bit << 48));
+	__raw_writeq((u64)bc->intr_addr | ((u64)bit << 48),
+			 (void *)((unsigned long)&bc->base->b_int_addr[pin].addr - 4));
+#endif
 	bridge_set(bc, b_int_enable, (1 << pin));
 	bridge_set(bc, b_int_enable, 0x7ffffe00); /* more stuff in int_enable */
 
@@ -710,6 +716,7 @@ static int bridge_probe(struct platform_device *pdev)
 	baddr = (u64)bd->masterwid << 60 | PCI64_ATTR_BAR;
 	switch ((bridge_read(bc, b_wid_id) >> 12) & 0xffff) {
 	case XBRIDGE_WIDGET_PART_NUM:
+	case 0xd102:
 		baddr |= PCI64_ATTR_SWAP;
 		break;
 	}
