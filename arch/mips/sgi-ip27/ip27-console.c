@@ -21,6 +21,8 @@
 #define IOC3_CLK	(22000000 / 3)
 #define IOC3_FLAGS	(0)
 
+#if 0
+
 static inline struct ioc3_uartregs *console_uart(void)
 {
 	struct ioc3 *ioc3;
@@ -40,3 +42,48 @@ void prom_putchar(char c)
 		;
 	writeb(c, &uart->iu_thr);
 }
+#else
+
+#include <linux/crc-ccitt.h>
+#include <linux/serial_reg.h>
+#include <asm/sn/ksys/l1.h>
+
+#define BRL1_FLAG_CH    0x7e
+#define BRL1_ESC_CH     0x7d
+#define BRL1_XOR_CH     0x20
+
+#define INIT_CRC        0xffff  /* Initial FCS value */
+#define GOOD_CRC        0xf0b8  /* Good final FCS value */
+
+static u64 *regs = (u64 *)REMOTE_HSPEC_ADDR(0, 0x80);
+
+static void ip35_l1_putc(u8 c, u16 *crc, bool esc)
+{
+	if (crc)
+		*crc = crc_ccitt_byte(*crc, c);
+
+
+	if (esc && (c == BRL1_FLAG_CH || c == BRL1_ESC_CH)) {
+		while ((readq(&regs[UART_LSR]) & 0x20) == 0)
+			;
+		writeq(BRL1_ESC_CH, &regs[0]);
+		c ^= BRL1_XOR_CH;
+	}
+	while ((readq(&regs[UART_LSR]) & 0x20) == 0)
+		;
+	writeq(c, &regs[0]);
+}
+
+void prom_putchar(char c)
+{
+	u16 crc = INIT_CRC;
+
+	ip35_l1_putc(BRL1_FLAG_CH, NULL, false);
+	ip35_l1_putc(BRL1_EVENT | SC_CONS_SYSTEM, &crc, true);
+	ip35_l1_putc(c, &crc, true);
+	crc ^= 0xffff;
+	ip35_l1_putc(crc & 0xff, NULL, true);
+	ip35_l1_putc(crc >> 8, NULL, true);
+	ip35_l1_putc(BRL1_FLAG_CH, NULL, false);
+}
+#endif
