@@ -21,10 +21,11 @@
 #define IOC3_CLK	(22000000 / 3)
 #define IOC3_FLAGS	(0)
 
-#if 0
+#if 1
 
 static inline struct ioc3_uartregs *console_uart(void)
 {
+#if 0
 	struct ioc3 *ioc3;
 	nasid_t nasid;
 
@@ -32,6 +33,10 @@ static inline struct ioc3_uartregs *console_uart(void)
 	ioc3 = (struct ioc3 *)KL_CONFIG_CH_CONS_INFO(nasid)->memory_base;
 
 	return &ioc3->sregs.uarta;
+	return (struct ioc3_uartregs *)((unsigned long)ioc3 + 0x380);
+#else
+	return (struct ioc3_uartregs *)0x920000000f200380;
+#endif
 }
 
 void prom_putchar(char c)

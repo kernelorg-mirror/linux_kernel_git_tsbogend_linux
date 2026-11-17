@@ -103,7 +103,7 @@ static void ip35_l1_dispatch_msg(struct l1_ctrl *l1)
 	}
 
 	chan = &l1->channels[l1->rx_buf[0] & 0x1f];
-	if (!chan)
+	if (!chan || !chan->push_msg)
 		return;
 
 	chan->push_msg(chan);
@@ -302,6 +302,7 @@ static int ip35_l1_tty_create(struct platform_device *pdev, struct l1_ctrl *l1)
 	tty->driver_name = "ip35-l1";
 	tty->name = "ttySC";
 	tty->minor_start = 0;
+	tty->major = 0;
 	tty->type = TTY_DRIVER_TYPE_SERIAL;
 	tty->subtype = SERIAL_TYPE_NORMAL;
 	tty->init_termios = tty_std_termios;
@@ -329,15 +330,68 @@ static int ip35_l1_tty_create(struct platform_device *pdev, struct l1_ctrl *l1)
 	return 0;
 }
 
-#define LOCAL_GENERAL	((0 << 28) | (0x3ff << 18) | (0x3f << 12) | 0x06)
+#define LOCAL_GENERAL(x) ((x << 28) | (0x3ff << 18) | (0x3f << 12) | 0x06)
+
+static void ip35_put_cmd_u16(u8 *buf, u16 val)
+{
+	*buf++ = (val >>  8) & 0xff;
+	*buf++ = (val >>  0) & 0xff;
+}
 
 static void ip35_put_cmd_u32(u8 *buf, u32 val)
 {
-	*buf++ = 0;
 	*buf++ = (val >> 24) & 0xff;
 	*buf++ = (val >> 16) & 0xff;
 	*buf++ = (val >>  8) & 0xff;
 	*buf++ = (val >>  0) & 0xff;
+}
+
+static void ip35_put_cmd_type_u32(u8 *buf, u32 val)
+{
+	*buf++ = 0;
+	ip35_put_cmd_u32(buf, val);
+}
+
+#define L1_REQ_EEPROM		0x0006
+#define L1_EEP_BOARD		2
+
+int ip35_l1_get_board_eeprom(struct l1_ctrl *l1, u32 addr, int idx)
+{
+	struct l1_chan *chan;
+	u8 cmd[64];
+	int len;
+
+	chan = &l1->channels[16];
+
+	init_completion(&chan->comp);
+
+	chan->push_msg = ip35_l1_cmd_push_msg;
+	chan->type_chan = BRL1_REQUEST | 16;
+	chan->l1 = l1;
+
+	ip35_put_cmd_u32(&cmd[0], addr);
+	ip35_put_cmd_u16(&cmd[4], L1_REQ_EEPROM);
+	cmd[6] = 4;
+	ip35_put_cmd_type_u32(&cmd[7], idx);
+	ip35_put_cmd_type_u32(&cmd[12], L1_EEP_BOARD);
+	ip35_put_cmd_type_u32(&cmd[17], 0);
+	ip35_put_cmd_type_u32(&cmd[22], 96);
+
+	len = 27;
+
+	pr_info("sending eeprom command\n");
+
+	ip35_l1_write(chan, cmd, len);
+
+	wait_for_completion(&chan->comp);
+	pr_info("got answer len %ld\n", chan->resp_len);
+	if (chan->resp_data)
+		print_hex_dump(KERN_INFO, "", DUMP_PREFIX_NONE, 16, 1, chan->resp_data, chan->resp_len, true);
+
+	kfree(chan->resp_data);
+	chan->resp_data = NULL;
+
+	return 0;
 }
 
 static int ip35_l1_cmd(struct l1_ctrl *l1) // XXX
@@ -355,29 +409,22 @@ static int ip35_l1_cmd(struct l1_ctrl *l1) // XXX
 	chan->l1 = l1;
 
 #if 0
-#define REQ_CODE	0x0004
+#define REQ_CODE	0x0008
 
-	cmd[0] = (LOCAL_GENERAL >> 24) & 0xff;
-	cmd[1] = (LOCAL_GENERAL >> 16) & 0xff;
-	cmd[2] = (LOCAL_GENERAL >>  8) & 0xff;
-	cmd[3] = (LOCAL_GENERAL >>  0) & 0xff;
-	cmd[4] = (REQ_CODE >>  8) & 0xff;
-	cmd[5] = (REQ_CODE >>  0) & 0xff;
+	ip35_put_cmd_u32(&cmd[0], LOCAL_GENERAL(0));
+	ip35_put_cmd_u16(&cmd[4], REQ_CODE);
 	len = 6;
+	ip35_put_cmd_type_u32(&cmd[7], 1);
 #else
 #define REQ_CODE	0x0006
 
-	cmd[0] = (LOCAL_GENERAL >> 24) & 0xff;
-	cmd[1] = (LOCAL_GENERAL >> 16) & 0xff;
-	cmd[2] = (LOCAL_GENERAL >>  8) & 0xff;
-	cmd[3] = (LOCAL_GENERAL >>  0) & 0xff;
-	cmd[4] = (REQ_CODE >>  8) & 0xff;
-	cmd[5] = (REQ_CODE >>  0) & 0xff;
+	ip35_put_cmd_u32(&cmd[0], LOCAL_GENERAL(0));
+	ip35_put_cmd_u16(&cmd[4], REQ_CODE);
 	cmd[6] = 4;
-	ip35_put_cmd_u32(&cmd[7], 0);
-	ip35_put_cmd_u32(&cmd[12], 1);
-	ip35_put_cmd_u32(&cmd[17], 0);
-	ip35_put_cmd_u32(&cmd[22], 32);
+	ip35_put_cmd_type_u32(&cmd[7], 0);
+	ip35_put_cmd_type_u32(&cmd[12], 2); // EEP_BOARD
+	ip35_put_cmd_type_u32(&cmd[17], 0);
+	ip35_put_cmd_type_u32(&cmd[22], 96);
 
 	len = 27;
 #endif
@@ -622,6 +669,20 @@ static int __init ip35_nvmem_setup(void)
 	nv->data[11] = crc & 0xff;
 	nv->data[12] = crc >> 8;
 	ip35_nvmem_create(nv, "ip35-nvmem-2", 16);
+
+	nv = kzalloc(sizeof(struct ip35_nvmem), GFP_KERNEL);
+	strcpy(nv->nvmem_name, "bridge-00000f800000-0b-000000000000");
+	memset(&nv->data[11], ' ', 19);
+	memset(&nv->data[32], ' ', 6);
+	memcpy(&nv->data[11], partnum, strlen(partnum));
+	crc = ~crc16(0, nv->data, 30);
+	nv->data[30] = crc & 0xff;
+	nv->data[31] = crc >> 8;
+	crc = ~crc16(0, &nv->data[32], 30);
+	nv->data[62] = crc & 0xff;
+	nv->data[63] = crc >> 8;
+	ip35_nvmem_create(nv, "ip35-nvmem-3", 64);
+
 
 	return 0;
 }

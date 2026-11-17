@@ -50,12 +50,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
 	/*
 	 * For the first processor also print the system type
 	 */
-	if (n == 0) {
+//	if (n == 0) {
 		seq_printf(m, "system type\t\t: %s\n", get_system_type());
 		if (mips_get_machine_name())
 			seq_printf(m, "machine\t\t\t: %s\n",
 				   mips_get_machine_name());
-	}
+//	}
 
 	seq_printf(m, "processor\t\t: %ld\n", n);
 	sprintf(fmt, "cpu model\t\t: %%s V%%d.%%d%s\n",

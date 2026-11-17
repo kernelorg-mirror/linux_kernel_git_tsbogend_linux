@@ -86,6 +86,8 @@ void per_cpu_init(void)
 	enable_percpu_irq(IP27_HUB_PEND1_IRQ, IRQ_TYPE_NONE);
 }
 
+#include <asm/sn/klconfig.h>
+
 void __init plat_mem_setup(void)
 {
 	u64 p, e, n_mode;

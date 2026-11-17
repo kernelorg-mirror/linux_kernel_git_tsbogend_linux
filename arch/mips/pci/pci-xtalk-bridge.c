@@ -31,12 +31,13 @@ dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
 	struct pci_dev *pdev = to_pci_dev(dev);
 	struct bridge_controller *bc = BRIDGE_CONTROLLER(pdev->bus);
 
-	return bc->baddr[PCI_SLOT(pdev->devfn)] + paddr;
+	// return bc->baddr[PCI_SLOT(pdev->devfn)] + paddr;
+	return bc->baddr[0] + paddr;
 }
 
 phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dma_addr)
 {
-	return dma_addr & ~(0xffUL << 56);
+	return dma_addr & ~(0xffffUL << 48);
 }
 
 #ifdef CONFIG_NUMA
@@ -102,6 +103,48 @@ static int ioc3_cfg_wr(void *addr, int where, int size, u32 value)
 	return PCIBIOS_SUCCESSFUL;
 }
 
+static void *bridge_reg_addr(struct bridge_controller *bc, unsigned int off)
+{
+	return bc->is_pic ? (void *)bc->base + off : (void *)bc->base + off + 4;
+}
+
+static void bridge_set(struct bridge_controller *bc, unsigned int off, u64 val)
+{
+	void *addr = bridge_reg_addr(bc, off);
+
+	if (bc->is_pic)
+		__raw_writeq(__raw_readq(addr) | val, addr);
+	else
+		__raw_writel(__raw_readl(addr) | val, addr);
+}
+
+static void bridge_clr(struct bridge_controller *bc, unsigned int off, u64 val)
+{
+	void *addr = bridge_reg_addr(bc, off);
+
+	if (bc->is_pic)
+		__raw_writeq(__raw_readq(addr) & ~val, addr);
+	else
+		__raw_writel(__raw_readl(addr) & ~val, addr);
+}
+
+static void bridge_write(struct bridge_controller *bc, unsigned int off,
+			 u64 val)
+{
+	if (bc->is_pic)
+		__raw_writeq(val, bridge_reg_addr(bc, off));
+	else
+		__raw_writel(val, bridge_reg_addr(bc, off));
+}
+
+static u64 bridge_read(struct bridge_controller *bc, unsigned int off)
+{
+	if (bc->is_pic)
+		return __raw_readq(bridge_reg_addr(bc, off));
+	else
+		return __raw_readl(bridge_reg_addr(bc, off));
+}
+
 static void bridge_disable_swapping(struct pci_dev *dev)
 {
 	struct bridge_controller *bc = BRIDGE_CONTROLLER(dev->bus);
@@ -109,8 +152,8 @@ static void bridge_disable_swapping(struct pci_dev *dev)
 
 	/* Turn off byte swapping */
 	bc->baddr[slot] &= ~PCI64_ATTR_SWAP;
-	bridge_clr(bc, b_device[slot].reg, BRIDGE_DEV_SWAP_DIR);
-	bridge_read(bc, b_widget.w_tflush);	/* Flush */
+	bridge_clr(bc, BOFF_DEVICE(slot), BRIDGE_DEV_SWAP_DIR);
+	bridge_read(bc, BOFF_WIDGET_TFLUSH);	/* Flush */
 }
 
 DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SGI, PCI_DEVICE_ID_SGI_IOC3,
@@ -137,6 +180,9 @@ static int pci_conf0_read_config(struct pci_bus *bus, unsigned int devfn,
 	void *addr;
 	u32 cf;
 	int res;
+
+	if (slot > 4)
+		return PCIBIOS_DEVICE_NOT_FOUND;
 
 	addr = &bridge->b_type0_cfg_dev[slot].f[fn].c[PCI_VENDOR_ID];
 	if (get_dbe(cf, (u32 *)addr))
@@ -176,7 +222,7 @@ static int pci_conf1_read_config(struct pci_bus *bus, unsigned int devfn,
 	u32 cf;
 	int res;
 
-	bridge_write(bc, b_pci_cfg, (busno << 16) | (slot << 11));
+	bridge_write(bc, BOFF_PCI_CFG, (busno << 16) | (slot << 11));
 	addr = &bridge->b_type1_cfg.c[(fn << 8) | PCI_VENDOR_ID];
 	if (get_dbe(cf, (u32 *)addr))
 		return PCIBIOS_DEVICE_NOT_FOUND;
@@ -263,7 +309,7 @@ static int pci_conf1_write_config(struct pci_bus *bus, unsigned int devfn,
 	u32 cf;
 	int res;
 
-	bridge_write(bc, b_pci_cfg, (busno << 16) | (slot << 11));
+	bridge_write(bc, BOFF_PCI_CFG, (busno << 16) | (slot << 11));
 	addr = &bridge->b_type1_cfg.c[(fn << 8) | PCI_VENDOR_ID];
 	if (get_dbe(cf, (u32 *)addr))
 		return PCIBIOS_DEVICE_NOT_FOUND;
@@ -324,10 +370,14 @@ static int bridge_set_affinity(struct irq_data *d, const struct cpumask *mask,
 	if (ret >= 0) {
 		cpu = cpumask_first_and(mask, cpu_online_mask);
 		data->nasid = cpu_to_node(cpu);
-		bridge_write(data->bc, b_int_addr[pin].addr,
-			     (((data->bc->intr_addr >> 30) & 0x30000) |
-			      bit | (data->nasid << 8)));
-		bridge_read(data->bc, b_wid_tflush);
+		if (data->bc->is_pic) {
+			bridge_write(data->bc, BOFF_INT_ADDR(pin),
+				     data->bc->intr_addr | ((u64)bit << 48));
+		} else
+			bridge_write(data->bc, BOFF_INT_ADDR(pin),
+				     (((data->bc->intr_addr >> 30) & 0x30000) |
+				      bit | (data->nasid << 8)));
+		bridge_read(data->bc, BOFF_WIDGET_TFLUSH);
 	}
 	return ret;
 #else
@@ -390,17 +440,16 @@ static int bridge_domain_activate(struct irq_domain *domain,
 	int pin = irqd->hwirq;
 	u32 device;
 
-#if 0
-	bridge_write(bc, b_int_addr[pin].addr,
-		     (((bc->intr_addr >> 30) & 0x30000) |
-		      bit | (data->nasid << 8)));
-#else
-	//bridge_write(bc, b_int_addr[pin].addr, bc->intr_addr | (bit << 48));
-	__raw_writeq((u64)bc->intr_addr | ((u64)bit << 48),
-			 (void *)((unsigned long)&bc->base->b_int_addr[pin].addr - 4));
-#endif
-	bridge_set(bc, b_int_enable, (1 << pin));
-	bridge_set(bc, b_int_enable, 0x7ffffe00); /* more stuff in int_enable */
+	if (bc->is_pic)
+		bridge_write(bc, BOFF_INT_ADDR(pin),
+			     bc->intr_addr | ((u64)bit << 48));
+	else
+		bridge_write(bc, BOFF_INT_ADDR(pin),
+			     (((bc->intr_addr >> 30) & 0x30000) |
+			      bit | (data->nasid << 8)));
+
+	bridge_set(bc, BOFF_INT_ENABLE, (1 << pin));
+	bridge_set(bc, BOFF_INT_ENABLE, 0x7ffffe00); /* more stuff in int_enable */
 
 	/*
 	 * Enable sending of an interrupt clear packet to the hub on a high to
@@ -409,18 +458,21 @@ static int bridge_domain_activate(struct irq_domain *domain,
 	 * IRIX sets additional bits in the address which are documented as
 	 * reserved in the bridge docs.
 	 */
-	bridge_set(bc, b_int_mode, (1UL << pin));
+	bridge_set(bc, BOFF_INT_MODE, (1UL << pin));
 
 	/*
 	 * We assume the bridge to have a 1:1 mapping between devices
 	 * (slots) and intr pins.
 	 */
-	device = bridge_read(bc, b_int_device);
+	device = bridge_read(bc, BOFF_INT_DEVICE);
 	device &= ~(7 << (pin*3));
-	device |= (pin << (pin*3));
-	bridge_write(bc, b_int_device, device);
+	if (bc->is_pic)
+		device |= ((pin + 1) << (pin*3));
+	else
+		device |= (pin << (pin*3));
+	bridge_write(bc, BOFF_INT_DEVICE, device);
 
-	bridge_read(bc, b_wid_tflush);
+	bridge_read(data->bc, BOFF_WIDGET_TFLUSH);
 	return 0;
 }
 
@@ -429,8 +481,8 @@ static void bridge_domain_deactivate(struct irq_domain *domain,
 {
 	struct bridge_irq_chip_data *data = irqd->chip_data;
 
-	bridge_clr(data->bc, b_int_enable, (1 << irqd->hwirq));
-	bridge_read(data->bc, b_wid_tflush);
+	bridge_clr(data->bc, BOFF_INT_ENABLE, (1 << irqd->hwirq));
+	bridge_read(data->bc, BOFF_WIDGET_TFLUSH);
 }
 
 static const struct irq_domain_ops bridge_domain_ops = {
@@ -668,6 +720,7 @@ static int bridge_probe(struct platform_device *pdev)
 	bc->busn.flags		= IORESOURCE_BUS;
 
 	bc->domain		= domain;
+	bc->is_pic = 1;
 
 	pci_add_resource_offset(&host->windows, &bd->mem, bd->mem_offset);
 	pci_add_resource_offset(&host->windows, &bd->io, bd->io_offset);
@@ -685,51 +738,61 @@ static int bridge_probe(struct platform_device *pdev)
 	/*
 	 * Clear all pending interrupts.
 	 */
-	bridge_write(bc, b_int_rst_stat, BRIDGE_IRR_ALL_CLR);
+	bridge_write(bc, BOFF_INT_RST_STAT, BRIDGE_IRR_ALL_CLR);
 
 	/*
 	 * Until otherwise set up, assume all interrupts are from slot 0
 	 */
-	bridge_write(bc, b_int_device, 0x0);
+	bridge_write(bc, BOFF_INT_DEVICE, 0x0);
 
 	/*
 	 * disable swapping for big windows
 	 */
-	bridge_clr(bc, b_wid_control,
+	bridge_clr(bc, BOFF_WIDGET_CONTROL,
 		   BRIDGE_CTRL_IO_SWAP | BRIDGE_CTRL_MEM_SWAP);
 #ifdef CONFIG_PAGE_SIZE_4KB
-	bridge_clr(bc, b_wid_control, BRIDGE_CTRL_PAGE_SIZE);
+	bridge_clr(bc, BOFF_WIDGET_CONTROL, BRIDGE_CTRL_PAGE_SIZE);
 #else /* 16kB or larger */
-	bridge_set(bc, b_wid_control, BRIDGE_CTRL_PAGE_SIZE);
+	bridge_set(bc, BOFF_WIDGET_CONTROL, BRIDGE_CTRL_PAGE_SIZE);
 #endif
 
 	/*
 	 * Hmm...  IRIX sets additional bits in the address which
 	 * are documented as reserved in the bridge docs.
 	 */
-	bridge_write(bc, b_wid_int_upper,
+	if (bc->is_pic) {
+		bridge_write(bc, BOFF_WIDGET_INT_LOWER, bc->intr_addr |
+							(u64)bd->masterwid << 48);
+	} else {
+		bridge_write(bc, BOFF_WIDGET_INT_UPPER,
 		     ((bc->intr_addr >> 32) & 0xffff) | (bd->masterwid << 16));
-	bridge_write(bc, b_wid_int_lower, bc->intr_addr & 0xffffffff);
-	bridge_write(bc, b_dir_map, (bd->masterwid << 20));	/* DMA */
-	bridge_write(bc, b_int_enable, 0);
+		bridge_write(bc, BOFF_WIDGET_INT_LOWER, bc->intr_addr & 0xffffffff);
+	}
+	bridge_write(bc, BOFF_DIR_MAP, (bd->masterwid << 20));	/* DMA */
+	bridge_write(bc, BOFF_INT_ENABLE, 0);
 
 	baddr = (u64)bd->masterwid << 60 | PCI64_ATTR_BAR;
-	switch ((bridge_read(bc, b_wid_id) >> 12) & 0xffff) {
+	switch ((bridge_read(bc, BOFF_WIDGET_ID) >> 12) & 0xffff) {
 	case XBRIDGE_WIDGET_PART_NUM:
 	case 0xd102:
-		baddr |= PCI64_ATTR_SWAP;
+		baddr |= PCI64_ATTR_SWAP | PCI64_ATTR_PREC;
 		break;
 	}
 	for (slot = 0; slot < 8; slot++) {
-		bridge_set(bc, b_device[slot].reg, BRIDGE_DEV_SWAP_DIR);
+		bridge_set(bc, BOFF_DEVICE(slot), BRIDGE_DEV_SWAP_DIR);
 		bc->pci_int[slot][0] = -1;
 		bc->pci_int[slot][1] = -1;
 		/* default interrupt pin mapping */
-		bc->int_mapping[slot][0] = slot;
-		bc->int_mapping[slot][1] = slot ^ 4;
+		if (bc->is_pic) {
+			bc->int_mapping[slot][0] = slot - 1;
+			bc->int_mapping[slot][1] = (slot - 1) ^ 4;
+		} else {
+			bc->int_mapping[slot][0] = slot;
+			bc->int_mapping[slot][1] = slot ^ 4;
+		}
 		bc->baddr[slot] = baddr;
 	}
-	bridge_read(bc, b_wid_tflush);	  /* wait until Bridge PIO complete */
+	bridge_read(bc, BOFF_WIDGET_TFLUSH);  /* wait until PIO complete */
 
 	bridge_setup_board(bc, partnum);
 

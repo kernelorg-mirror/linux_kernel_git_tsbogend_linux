@@ -2710,7 +2710,7 @@ config RANDOMIZE_BASE_MAX_OFFSET
 
 config NODES_SHIFT
 	int
-	default "6"
+	default "2"
 	depends on NUMA
 
 config HW_PERF_EVENTS

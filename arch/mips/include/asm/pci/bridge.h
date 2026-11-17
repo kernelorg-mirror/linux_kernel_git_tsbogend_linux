@@ -88,6 +88,12 @@ struct bridge_regs {
 #define b_wid_llp			b_widget.w_llp_cfg
 #define b_wid_tflush			b_widget.w_tflush
 
+#define BOFF_WIDGET_ID		0x0000
+#define BOFF_WIDGET_CONTROL	0x0020
+#define BOFF_WIDGET_INT_UPPER	0x0030
+#define BOFF_WIDGET_INT_LOWER	0x0038
+#define BOFF_WIDGET_TFLUSH	0x0050
+
 	/* bridge-specific widget configuration 0x000058-0x00007F */
 	u32	_pad_000058;
 	u32	b_wid_aux_err;		/* 0x00005C */
@@ -102,6 +108,7 @@ struct bridge_regs {
 	/* PMU & Map 0x000080-0x00008F */
 	u32	_pad_000080;
 	u32	b_dir_map;			/* 0x000084 */
+#define BOFF_DIR_MAP		0x0080
 	u32	_pad_000088[2];
 
 	/* SSRAM 0x000090-0x00009F */
@@ -126,6 +133,7 @@ struct bridge_regs {
 
 	u32	_pad_0000C8;
 	u32	b_pci_cfg;			/* 0x0000CC */
+#define	BOFF_PCI_CFG		0x00C8
 	u32	_pad_0000D0;
 	u32	b_pci_err_upper;		/* 0x0000D4 */
 	u32	_pad_0000D8;
@@ -139,12 +147,16 @@ struct bridge_regs {
 	u32	b_int_status;			/* 0x000104 */
 	u32	_pad_000108;
 	u32	b_int_enable;			/* 0x00010C */
+#define BOFF_INT_ENABLE		0x108
 	u32	_pad_000110;
 	u32	b_int_rst_stat;			/* 0x000114 */
+#define BOFF_INT_RST_STAT	0x110
 	u32	_pad_000118;
 	u32	b_int_mode;			/* 0x00011C */
+#define BOFF_INT_MODE		0x118
 	u32	_pad_000120;
 	u32	b_int_device;			/* 0x000124 */
+#define BOFF_INT_DEVICE		0x120
 	u32	_pad_000128;
 	u32	b_int_host_err;			/* 0x00012C */
 
@@ -152,6 +164,7 @@ struct bridge_regs {
 		u32	__pad;			/* 0x0001{30,,,68} */
 		u32	addr;			/* 0x0001{34,,,6C} */
 	} b_int_addr[8];				/* 0x000130 */
+#define BOFF_INT_ADDR(s)	(0x130 + (s) * 8)
 
 	u32	_pad_000170[36];
 
@@ -160,6 +173,8 @@ struct bridge_regs {
 		u32	__pad;			/* 0x0002{00,,,38} */
 		u32	reg;			/* 0x0002{04,,,3C} */
 	} b_device[8];					/* 0x000200 */
+
+#define BOFF_DEVICE(s)		0x0200 + ((s) * 8)
 
 	struct {
 		u32	__pad;			/* 0x0002{40,,,78} */
@@ -819,12 +834,5 @@ struct bridge_controller {
 
 #define BRIDGE_CONTROLLER(bus) \
 	((struct bridge_controller *)((bus)->sysdata))
-
-#define bridge_read(bc, reg)		__raw_readl(&bc->base->reg)
-#define bridge_write(bc, reg, val)	__raw_writel(val, &bc->base->reg)
-#define bridge_set(bc, reg, val)	\
-	__raw_writel(__raw_readl(&bc->base->reg) | (val), &bc->base->reg)
-#define bridge_clr(bc, reg, val)	\
-	__raw_writel(__raw_readl(&bc->base->reg) & ~(val), &bc->base->reg)
 
 #endif /* _ASM_PCI_BRIDGE_H */
